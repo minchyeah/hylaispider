@@ -5,7 +5,7 @@ use Beanbun\Lib\Helper;
 
 // 自动加载类
 require_once dirname(__DIR__) . '/loader.php';
-
+sleep(1);
 $beanbun = new Beanbun;
 $beanbun->name = 'ZhongHuaSuan';
 $beanbun->count = 5;
@@ -21,8 +21,8 @@ $beanbun->setQueue('memory', [
      'port' => '2207'
  ]);
 $beanbun->afterDownloadPage = function($beanbun) {
-    echo print_r($beanbun->page, true) . PHP_EOL;
-    echo print_r($beanbun->url, true) . PHP_EOL;
+    $beanbun->log(print_r($beanbun->page, true));
+    $beanbun->log(print_r($beanbun->url, true));
 };
 $beanbun->start();
 

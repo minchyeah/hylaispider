@@ -76,149 +76,26 @@ class Beanbun
         Timer::del($time_id);
     }
 
-    public static function run()
-    {
-        //@Worker::runAll();
-    }
-
     public function __construct($config = [])
     {
-        global $argv;
-        $this->commands = $argv;
-        $this->name = isset($config['name'])
-        ? $config['name']
-        : current(explode('.', $this->commands[0]));
+        $this->name = isset($config['name']) ? $config['name'] : 'hylaispider';
         $this->logFile = isset($config['logFile']) ? $config['logFile'] : __DIR__ . '/' . $this->name . '_access.log';
-        $this->setQueue();
-        $this->setDownloader();
-        $this->setLog();
-    }
-
-    public function command()
-    {
-        switch ($this->commands[1]) {
-            case 'start':
-                foreach ((array) $this->seed as $url) {
-                    if (is_string($url)) {
-                        $this->queue()->add($url);
-                    } elseif (is_array($url)) {
-                        $this->queue()->add($url[0], $url[1]);
-                    }
-                }
-                $this->queues = null;
-                echo "Beanbun is starting...\n";
-                //fclose(STDOUT);
-                $STDOUT = fopen($this->logFile, "a");
-                break;
-            case 'clean':
-                $this->queue()->clean();
-                unlink($this->logFile);
-                die();
-                break;
-            case 'stop':
-                break;
-            default:
-                break;
-        }
     }
 
     // 执行爬虫
     public function start()
     {
-        if (!isset($this->commands[1])) {
-            $this->daemonize = false;
-        }
+        $worker = new Worker;
+        $worker->count = $this->count;
+        $worker->name = $this->name;
+        $worker->onWorkerStart = [$this, 'onWorkerStart'];
+        $worker->onWorkerStop = [$this, 'onWorkerStop'];
+        $this->worker = $worker;
 
-        if ($this->daemonize) {
-            $this->check();
+        //Worker::$daemonize = true;
+        Worker::$stdoutFile = $this->logFile;
+        \Beanbun\Lib\Db::closeAll();
 
-            $worker = new Worker;
-            $worker->count = $this->count;
-            $worker->name = $this->name;
-            $worker->onWorkerStart = [$this, 'onWorkerStart'];
-            $worker->onWorkerStop = [$this, 'onWorkerStop'];
-            $this->worker = $worker;
-
-            //Worker::$daemonize = true;
-            Worker::$stdoutFile = $this->logFile;
-            \Beanbun\Lib\Db::closeAll();
-
-            $this->queueArgs['name'] = $this->name;
-            $this->initHooks();
-            $this->command();
-
-            self::run();
-        } else {
-            $this->initHooks();
-            $this->seed = (array) $this->seed;
-            while (count($this->seed)) {
-                $this->crawler();
-            }
-        }
-    }
-
-    public function check()
-    {
-        $error = false;
-        $text = '';
-        $version_ok = $pcntl_loaded = $posix_loaded = true;
-        if (!version_compare(phpversion(), "5.3.3", ">=")) {
-            $text .= "PHP Version >= 5.3.3                 \033[31;40m [fail] \033[0m\n";
-            $error = true;
-        }
-
-        if (!in_array("pcntl", get_loaded_extensions())) {
-            $text .= "Extension posix check                \033[31;40m [fail] \033[0m\n";
-            $error = true;
-        }
-
-        if (!in_array("posix", get_loaded_extensions())) {
-            $text .= "Extension posix check                \033[31;40m [fail] \033[0m\n";
-            $error = true;
-        }
-
-        $check_func_map = array(
-            "stream_socket_server",
-            "stream_socket_client",
-            "pcntl_signal_dispatch",
-        );
-
-        if ($disable_func_string = ini_get("disable_functions")) {
-            $disable_func_map = array_flip(explode(",", $disable_func_string));
-        }
-
-        foreach ($check_func_map as $func) {
-            if (isset($disable_func_map[$func])) {
-                $text .= "\033[31;40mFunction " . implode(', ', $check_func_map) . "may be disabled. Please check disable_functions in php.ini\033[0m\n";
-                $error = true;
-                break;
-            }
-        }
-
-        if ($error) {
-            echo $text;
-            exit;
-        }
-    }
-
-    public function shutdown()
-    {
-        $master_pid = is_file(Worker::$pidFile) ? file_get_contents(Worker::$pidFile) : 0;
-        $master_pid && posix_kill($master_pid, SIGINT);
-        $timeout = 5;
-        $start_time = time();
-        while (1) {
-            $master_is_alive = $master_pid && posix_kill($master_pid, 0);
-            if ($master_is_alive) {
-                if (time() - $start_time >= $timeout) {
-                    exit;
-                }
-                usleep(10000);
-                continue;
-            }
-            exit(0);
-            break;
-        }
     }
 
     public function initHooks()
@@ -283,9 +160,28 @@ class Beanbun
     // 爬虫进程
     public function onWorkerStart($worker)
     {
+        sleep(1);
+        $this->setQueue();
+        $this->setDownloader();
+        $this->setLog();
         foreach ($this->startWorkerHooks as $hook) {
             call_user_func($hook, $this);
         }
+        
+        $this->queueArgs['name'] = $this->name;
+        $this->initHooks();
+
+        foreach ((array) $this->seed as $url) {
+            if (is_string($url)) {
+                $this->queue()->add($url);
+            } elseif (is_array($url)) {
+                $this->queue()->add($url[0], $url[1]);
+            }
+        }
+        $this->queues = null;
+        echo "Beanbun is starting...\n";
+        //fclose(STDOUT);
+        $STDOUT = fopen($this->logFile, "a");
     }
 
     public function queue()
@@ -300,17 +196,9 @@ class Beanbun
         'host' => '127.0.0.1',
         'port' => '2207',
     ]) {
-        if ($callback === 'memory' || $callback === null) {
-            $this->queueFactory = function ($args) {
-                return new \Beanbun\Queue\MemoryQueue($args);
-            };
-        } elseif ($callback == 'redis') {
-            $this->queueFactory = function ($args) {
-                return new \Beanbun\Queue\RedisQueue($args);
-            };
-        } else {
-            $this->queueFactory = $callback;
-        }
+        $this->queueFactory = function ($args) {
+            return new \Queue\Queue($args);
+        };
 
         $this->queueArgs = $args;
     }

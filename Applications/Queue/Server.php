@@ -1,6 +1,7 @@
 <?php
 namespace Queue;
 
+use \Beanbun\Lib\BloomFilter;
 use Workerman\Worker;
 
 /**
