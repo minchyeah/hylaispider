@@ -1,10 +1,13 @@
 {
-    "name"  : "minchyeah/bitting",
-    "type"  : "project",
-    "keywords": ["bitting"],
-    "homepage": "http://www.minchyeah.net",
-    "license" : "MIT",
-    "require": {
-        "workerman/gateway-worker" : ">=3.0.0"
-    }
+	"name" : "minchyeah/hylaispider",
+	"type" : "project",
+	"keywords" : [
+		"hylaispider"
+	],
+	"homepage" : "http://www.minchyeah.net",
+	"license" : "MIT",
+	"require" : {
+		"workerman/workerman" : ">=3.3",
+		"guzzlehttp/guzzle" : "^6.0"
+	}
 }
