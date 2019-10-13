@@ -1,0 +1,10 @@
+{
+    "name"  : "minchyeah/bitting",
+    "type"  : "project",
+    "keywords": ["bitting"],
+    "homepage": "http://www.minchyeah.net",
+    "license" : "MIT",
+    "require": {
+        "workerman/gateway-worker" : ">=3.0.0"
+    }
+}

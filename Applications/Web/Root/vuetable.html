@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>数据展示</title>
+    <link rel="stylesheet" href="/css/index.css">
+    <style>
+        #app{
+            margin: 0 auto;
+            width: 900px;
+        }
+        .title-cell-class-name-test{
+            color:#fff;
+        }
+        .column-red{
+            color: #F00;
+        }
+        .column-green{
+            color: #05ff05;
+        }
+        .column-bold{
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+<div id="app">
+    <template>
+        <v-table
+                style="width:100%"
+                :columns="columns"
+                :table-data="tableData"
+                :row-click="rowClick"
+                :column-cell-class-name="columnCellClass"
+                row-hover-color="#eee"
+                row-click-color="#edf7ff"
+        ></v-table>
+    </template>
+</div>
+</body>
+<!-- 先引入 Vue -->
+<script src="/js/vue.min.js"></script>
+<!-- 引入组件库 -->
+<script src="/js/index.js"></script>
+<script>
+    new Vue({
+        el: '#app',
+        data: function() {
+            return {
+                tableData: [
+                {
+                    "currency": "eth",
+                    "cash_amount": "167.891601997168",
+                    "amount": "0.6373",
+                    "unfrozen": "0.6373",
+                    "cost_price": "263.44202416",
+                    "price": "263.44202416",
+                    "gainloss": "0",
+                    "gainloss_rate": "0"
+                },
+                {
+                    "currency": "trx",
+                    "cash_amount": "0.1296035084252082",
+                    "amount": "1174.15753239",
+                    "unfrozen": "1174.15753239",
+                    "cost_price": "0.00011038",
+                    "price": "0.00011038",
+                    "gainloss": "0",
+                    "gainloss_rate": "0"
+                },
+                {
+                    "currency": "xrp",
+                    "cash_amount": "31.2",
+                    "amount": "100",
+                    "unfrozen": "100",
+                    "cost_price": "0.312",
+                    "price": "0.312",
+                    "gainloss": "-2.1565",
+                    "gainloss_rate": "-0.233%"
+                },
+                {
+                    "currency": "new",
+                    "cash_amount": "29.7306618960129576",
+                    "amount": "10523.97909269",
+                    "unfrozen": "10523.97909269",
+                    "cost_price": "0.00282504",
+                    "price": "0.00282504",
+                    "gainloss": "-20",
+                    "gainloss_rate": "-1.9%"
+                },
+                {
+                    "currency": "top",
+                    "cash_amount": "15.0250099020795576",
+                    "amount": "3017.18537496",
+                    "unfrozen": "3017.18537496",
+                    "cost_price": "0.00497981",
+                    "price": "0.00497981",
+                    "gainloss": "3.1545",
+                    "gainloss_rate": "2.66%"
+                }
+                ],
+                columns: [
+                    {field: 'currency', title:'交易币', width: 80,height:80,titleAlign: 'center',columnAlign:'center',formatter: function (rowData,rowIndex,pagingIndex,field) {
+                                return rowData.currency + '<br />' + rowData.cash_amount;
+                            },isResize:true},
+                    {field: 'cash_amount', title: '市值', width: 100, titleAlign: 'center',columnAlign:'center',isResize:true},
+                    {field: 'amount', title: '持有', width: 120, titleAlign: 'center',columnAlign:'center',isResize:true},
+                    {field: 'unfrozen', title: '可卖', width: 120, titleAlign: 'center',columnAlign:'left',isResize:true},
+                    {field: 'cost_price', title: '成本', width: 120, titleAlign: 'center',columnAlign:'left',isResize:true},
+                    {field: 'price', title: '现价', width: 120, titleAlign: 'center',columnAlign:'left',isResize:true},
+                    {field: 'gainloss', title: '盈亏', width: 120, titleAlign: 'center',columnAlign:'left',isResize:true},
+                    {field: 'gainloss_rate', title: '盈亏比', width: 120, titleAlign: 'center',columnAlign:'left',isResize:true}
+                ]
+            }
+        },
+        methods:{
+            columnCellClass(rowIndex,columnName,rowData){
+                if (columnName==='gainloss' && rowData.gainloss < 0){
+                    return 'column-green';
+                }
+                if(columnName==='gainloss' && rowData.gainloss > 0){
+                    return 'column-red';
+                }
+                if (columnName==='gainloss_rate' && rowData.gainloss < 0){
+                    return 'column-green';
+                }
+                if(columnName==='gainloss_rate' && rowData.gainloss > 0){
+                    return 'column-red';
+                }
+            },
+
+            rowClick(rowIndex,rowData){
+                console.log(rowIndex);
+                console.log(rowData);
+            }
+        }
+    })
+</script>
+</html>

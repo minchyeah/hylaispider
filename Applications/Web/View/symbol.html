@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>数据展示</title>
+    <link rel="stylesheet" href="/css/index.css">
+    <style>
+        #app{
+            margin: 0 auto;
+            width: 1020px;
+        }
+        .title-cell-class-name-test{
+            color:#fff;
+        }
+        .column-red{
+            color: #F00;
+        }
+        .column-green{
+            color: #05ff05;
+        }
+        .column-bold{
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+<div id="app">
+    <template>
+        <v-table
+                style="width:100%"
+                :columns="columns"
+                :table-data="tableData"
+                :row-click="rowClick"
+                :column-cell-class-name="columnCellClass"
+                row-hover-color="#eee"
+                row-click-color="#edf7ff"
+        ></v-table>
+    </template>
+</div>
+</body>
+<!-- 先引入 Vue -->
+<script src="/js/vue.min.js"></script>
+<!-- 引入easytable组件库 -->
+<script src="/js/index.js"></script>
+<script src="/js/vue-resource.min.js"></script>
+<script>
+    var v = new Vue({
+        el: '#app',
+        data: function() {
+            return {
+                tableData: {$data},
+                columns: [
+                    {field: 'currency', title:'交易币', width: 80,titleAlign: 'center',columnAlign:'center',formatter: function (rowData,rowIndex,pagingIndex,field) {
+                                return rowData.currency + '<br />' + rowData.usdt_amount;
+                            },isResize:true},
+                    {field: 'amount', title: '持有', width: 120, titleAlign: 'center',columnAlign:'right',isResize:true},
+                    {field: 'unfrozen', title: '可卖', width: 120, titleAlign: 'center',columnAlign:'right',isResize:true},
+                    {field: 'usdt_amount', title: '成本值', width: 120, titleAlign: 'center',columnAlign:'right',isResize:true},
+                    {field: 'usdt_price', title: '成本价', width: 120, titleAlign: 'center',columnAlign:'right',isResize:true},
+                    {field: 'cash_amount', title: '现值', width: 120, titleAlign: 'center',columnAlign:'right',isResize:true},
+                    {field: 'cash_price', title: '现价', width: 120, titleAlign: 'center',columnAlign:'right',isResize:true},
+                    {field: 'gainloss', title: '盈亏', width: 120, titleAlign: 'center',columnAlign:'center',isResize:true},
+                    {field: 'gainloss_rate', title: '盈亏比', width: 100, titleAlign: 'center',columnAlign:'center',isResize:true}
+                ]
+            }
+        },
+        methods:{
+            columnCellClass(rowIndex,columnName,rowData){
+                if (columnName==='gainloss' && rowData.gainloss < 0){
+                    return 'column-green';
+                }
+                if(columnName==='gainloss' && rowData.gainloss > 0){
+                    return 'column-red';
+                }
+                if (columnName==='gainloss_rate' && rowData.gainloss < 0){
+                    return 'column-green';
+                }
+                if(columnName==='gainloss_rate' && rowData.gainloss > 0){
+                    return 'column-red';
+                }
+            },
+
+            rowClick(rowIndex,rowData){
+                console.log(rowIndex);
+                console.log(rowData);
+            },
+
+            request(){
+                this.$http.get('/balance/data').then((res) => {
+                        this.tableData = res.data;
+                    });
+            }
+        }
+    });
+
+    setInterval(function(){
+        v.request();
+    }, 30000);
+
+</script>
+</html>

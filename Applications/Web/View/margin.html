@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>交易分析</title>
+    <link rel="stylesheet" href="/css/index.css">
+    <style>
+        #app{
+            margin: 0 auto;
+            width: 1000px;
+        }
+        .title-cell-class-name-test{
+            color:#fff;
+        }
+        .column-red{
+            color: #F00;
+        }
+        .column-green{
+            color: #05ff05;
+        }
+        .column-bold{
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+<div id="app">
+    <template>
+        <v-table
+                style="width:100%"
+                :columns="columns"
+                :table-data="tableData"
+                :row-click="rowClick"
+                :column-cell-class-name="columnCellClass"
+                row-hover-color="#eee"
+                row-click-color="#edf7ff"
+        ></v-table>
+    </template>
+</div>
+</body>
+<!-- 先引入 Vue -->
+<script src="/js/vue.min.js"></script>
+<!-- 引入组件库 -->
+<script src="/js/index.js"></script>
+<script src="/js/bc.js"></script>
+<script>
+    new Vue({
+        el: '#app',
+        data: function() {
+            return {
+                tableData: {$data},
+                columns: [
+                    {field: 'symbol', title:'交易对', width: 100,titleAlign: 'center',columnAlign:'center',isResize:true},
+                    {field: 'price_precision', title: '报价精度', width: 150, titleAlign: 'center',columnAlign:'right',isResize:true},
+                    {field: 'amount_precision', title: '计数精度', width: 150, titleAlign: 'center',columnAlign:'right',isResize:true},
+                    {field: 'value_precision', title: '交易金额精度', width: 150, titleAlign: 'center',columnAlign:'right',isResize:true},
+                    {field: 'min_order_amt', title: '最小下单量', width: 150, titleAlign: 'center',columnAlign:'right',isResize:true},
+                    {field: 'min_order_value', title: '最小下单金额', width: 150, titleAlign: 'center',columnAlign:'center',isResize:true},
+                    {field: 'price', title: '现价', width: 150, titleAlign: 'center',columnAlign:'right',isResize:true},
+                ]
+            }
+        },
+        methods:{
+            columnCellClass(rowIndex,columnName,rowData){
+                if (columnName==='gainloss' && rowData.gainloss < 0){
+                    return 'column-green';
+                }
+                if(columnName==='gainloss' && rowData.gainloss > 0){
+                    return 'column-red';
+                }
+                if (columnName==='gainloss_rate' && rowData.gainloss < 0){
+                    return 'column-green';
+                }
+                if(columnName==='gainloss_rate' && rowData.gainloss > 0){
+                    return 'column-red';
+                }
+            },
+
+            rowClick(rowIndex,rowData){
+                console.log(rowIndex);
+                console.log(rowData);
+            }
+        }
+    })
+</script>
+</html>
