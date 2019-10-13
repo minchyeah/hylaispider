@@ -78,7 +78,7 @@ class Beanbun
 
     public static function run()
     {
-        @Worker::runAll();
+        //@Worker::runAll();
     }
 
     public function __construct($config = [])
@@ -139,7 +139,7 @@ class Beanbun
             $worker->onWorkerStop = [$this, 'onWorkerStop'];
             $this->worker = $worker;
 
-            Worker::$daemonize = true;
+            //Worker::$daemonize = true;
             Worker::$stdoutFile = $this->logFile;
             \Beanbun\Lib\Db::closeAll();
 

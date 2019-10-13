@@ -38,9 +38,9 @@ class MemoryQueue implements QueueInterface
         }
 
         $globalServer = new Server($ip, $port);
-        Worker::$daemonize = true;
+        //Worker::$daemonize = true;
         Worker::$stdoutFile = __DIR__ . '/server.log';
-        @Worker::runAll();
+        //@Worker::runAll();
     }
 
     public function __construct($config)
