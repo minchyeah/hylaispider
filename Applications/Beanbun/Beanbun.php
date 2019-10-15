@@ -18,7 +18,7 @@ class Beanbun
     public $seed = [];
     public $daemonize = true;
     public $urlFilter = [];
-    public $interval = 5;
+    public $interval = 2;
     public $timeout = 5;
     public $userAgent = 'pc';
     public $logFile = '';
@@ -158,7 +158,7 @@ class Beanbun
     // 爬虫进程
     public function onWorkerStart($worker)
     {
-        $this->setQueue(null, [
+        $this->setQueue([
             'name' => $this->name,
             'host' => \Config\Queue::$address,
             'port' => \Config\Queue::$port
@@ -181,8 +181,6 @@ class Beanbun
         $this->queueArgs['name'] = $this->name;
 
         $this->queues = null;
-        echo "Beanbun is starting...\n";
-        //fclose(STDOUT);
         $STDOUT = fopen($this->logFile, "a");
     }
 
@@ -194,7 +192,7 @@ class Beanbun
         return $this->queues;
     }
 
-    public function setQueue($callback = null, $args = [
+    public function setQueue($args = [
         'host' => '127.0.0.1',
         'port' => '2207',
     ]) {
@@ -319,7 +317,7 @@ class Beanbun
         }
 
         $options = array_merge([
-            'headers' => $this->options['headers'] ?: [],
+            'headers' => isset($this->options['headers']) ?: [],
             'reserve' => false,
             'timeout' => $this->timeout,
         ], (array) $queue['options']);

@@ -12,7 +12,8 @@ $beanbun->seed = 'https://list.zhonghuasuan.com/';
 $beanbun->max = 30;
 $beanbun->logFile = __DIR__ . '/zhonghuasuan_access.log';
 $beanbun->urlFilter = [
-    '/https:\/\/list.zhonghuasuan.com\/cat-0-0-(\d).html/'
+    //'/https:\/\/list.zhonghuasuan.com\/cat-0-0-(\d).html/',
+    '/https:\/\/detail.zhonghuasuan.com\/(\d+).html/'
 ];
 // 设置队列
 $beanbun->setQueue('memory', [
@@ -20,8 +21,7 @@ $beanbun->setQueue('memory', [
         'port' => \Config\Queue::$port
  	]);
 $beanbun->afterDownloadPage = function($beanbun) {
-    $beanbun->log(print_r($beanbun->page, true));
-    $beanbun->log(print_r($beanbun->url, true));
+	file_put_contents(__DIR__ . '/' . md5($beanbun->url), $beanbun->page);
 };
 $beanbun->start();
 
