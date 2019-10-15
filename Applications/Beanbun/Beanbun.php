@@ -3,6 +3,7 @@ namespace Beanbun;
 
 use Beanbun\Exception\BeanbunException;
 use Beanbun\Lib\Helper;
+use Beanbun\Lib\Selector;
 use Exception;
 use GuzzleHttp\Client;
 use Workerman\Lib\Timer;
@@ -257,6 +258,7 @@ class Beanbun
 
         $this->queue = '';
         $this->url = '';
+        $this->urlType = '';
         $this->method = '';
         $this->page = '';
         $this->options = [];
@@ -305,8 +307,12 @@ class Beanbun
         } else{
             $this->queue = $queue;
         }
-
-        $this->urlType = $queue['options']['url_type'] ? : 'list';
+        if(isset($queue['options']['url_type']) && 
+            in_array($queue['options']['url_type'], ['list','content'])){
+            $this->urlType = $queue['options']['url_type'];
+        }else{
+            $this->urlType = 'list';
+        }
 
         $options = array_merge([
             'headers' => isset($this->options['headers']) ?: [],
@@ -354,7 +360,7 @@ class Beanbun
         foreach ($urls as $url) {
             foreach ($this->listUrlFilter as $urlPattern) {
                 if (preg_match($urlPattern, $url)) {
-                    $this->log("get list url from {$this->url} ". print_r($url, true).PHP_EOL);
+                    //$this->log("get list url from {$this->url} ". print_r($url, true).PHP_EOL);
                     $this->queue()->add($url, ['url_type'=>'list']);
                 }
             }
@@ -370,7 +376,7 @@ class Beanbun
         foreach ($urls as $url) {
             foreach ($this->contentUrlFilter as $urlPattern) {
                 if (preg_match($urlPattern, $url)) {
-                    $this->log("get content url from {$this->url} ". print_r($url, true).PHP_EOL);
+                    //$this->log("get content url from {$this->url} ". print_r($url, true).PHP_EOL);
                     $this->queue()->add($url, ['url_type'=>'content']);
                 }
             }
@@ -384,5 +390,63 @@ class Beanbun
         } else {
             call_user_func($middleware, $this);
         }
+    }
+
+    /**
+     * 采用xpath分析提取字段
+     * 
+     * @param mixed $html
+     * @param mixed $selector
+     * @return void
+     * @author seatle <seatle@foxmail.com> 
+     * @created time :2016-09-18 10:17
+     */
+    public function get_fields_xpath($html, $selector, $fieldname) 
+    {
+        $result = Selector::select($html, $selector);
+        if (Selector::$error)
+        {
+            $this->log("Field(\"{$fieldname}\") ".Selector::$error."\n");
+        }
+        return $result;
+    }
+
+    /**
+     * 采用正则分析提取字段
+     * 
+     * @param mixed $html
+     * @param mixed $selector
+     * @return void
+     * @author seatle <seatle@foxmail.com> 
+     * @created time :2016-09-18 10:17
+     */
+    public function get_fields_regex($html, $selector, $fieldname) 
+    {
+        $result = Selector::select($html, $selector, 'regex');
+        if (Selector::$error) 
+        {
+            $this->log("Field(\"{$fieldname}\") ".Selector::$error."\n");
+        }
+        return $result;
+    }
+
+    /**
+     * 采用CSS选择器提取字段
+     * 
+     * @param mixed $html
+     * @param mixed $selector
+     * @param mixed $fieldname
+     * @return void
+     * @author seatle <seatle@foxmail.com> 
+     * @created time :2016-09-18 10:17
+     */
+    public function get_fields_css($html, $selector, $fieldname) 
+    {
+        $result = Selector::select($html, $selector, 'css');
+        if (Selector::$error) 
+        {
+            $this->log("Field(\"{$fieldname}\") ".Selector::$error."\n");
+        }
+        return $result;
     }
 }

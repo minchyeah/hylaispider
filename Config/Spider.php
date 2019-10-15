@@ -27,19 +27,19 @@ class Spider
         // 标题
         array(
             'name' => "title",
-            'selector' => "//h1[contains(@class,'headtext')]",
+            'selector' => "//span[contains(@class,'breadcrumbs-target')]",
             'required' => true,
         ),
         // 分类
         array(
             'name' => "category",
-            'selector' => "//div[contains(@class,'relation_mdd')]//a",
+            'selector' => "//p[contains(@class,'breadcrumbs-path')]//a",
             'required' => true,
         ),
         // 图片
         array(
             'name' => "images",
-            'selector' => "//li[contains(@class,'time')]",
+            'selector' => "//div[contains(@class,'goodsDetail-gallery')]//ul//li//@goods-img",
             'required' => true,
             'repeated' => true
         ),
