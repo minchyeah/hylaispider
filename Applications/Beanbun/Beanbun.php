@@ -132,7 +132,7 @@ class Beanbun
 
         if ($this->discoverUrl) {
             $this->discoverUrlHooks[] = $this->discoverUrl;
-        } elseif ($this->daemonize) {
+        } else {
             $this->discoverUrlHooks[] = [$this, 'defaultDiscoverUrl'];
         }
 
@@ -140,13 +140,11 @@ class Beanbun
             $this->afterDiscoverHooks[] = $this->afterDiscover;
         }
 
-        if ($this->daemonize) {
-            $this->afterDiscoverHooks[] = function ($beanbun) {
-                if ($beanbun->options['reserve'] == false) {
-                    $beanbun->queue()->queued($beanbun->queue);
-                }
-            };
-        }
+        $this->afterDiscoverHooks[] = function ($beanbun) {
+            if ($beanbun->options['reserve'] == false) {
+                $beanbun->queue()->queued($beanbun->queue);
+            }
+        };
 
         if ($this->stopWorker) {
             $this->stopWorkerHooks[] = $this->stopWorker;
@@ -161,18 +159,10 @@ class Beanbun
     public function onWorkerStart($worker)
     {
         $this->setQueue(null, [
+            'name' => $this->name,
             'host' => \Config\Queue::$address,
             'port' => \Config\Queue::$port
         ]);
-        $this->setDownloader();
-        $this->setLog();
-        foreach ($this->startWorkerHooks as $hook) {
-            call_user_func($hook, $this);
-        }
-        
-        $this->queueArgs['name'] = $this->name;
-        $this->initHooks();
-
         foreach ((array) $this->seed as $url) {
             if (is_string($url)) {
                 $this->queue()->add($url);
@@ -180,6 +170,16 @@ class Beanbun
                 $this->queue()->add($url[0], $url[1]);
             }
         }
+        $this->initHooks();
+
+        $this->setDownloader();
+        $this->setLog();
+        foreach ($this->startWorkerHooks as $hook) {
+            call_user_func($hook, $this);
+        }
+        
+        $this->queueArgs['name'] = $this->name;
+
         $this->queues = null;
         echo "Beanbun is starting...\n";
         //fclose(STDOUT);
@@ -323,7 +323,7 @@ class Beanbun
             'reserve' => false,
             'timeout' => $this->timeout,
         ], (array) $queue['options']);
-
+        print_r($queue);
         if ($this->daemonize && !$options['reserve'] && $this->queue()->isQueued($queue)) {
             $this->error();
         }
