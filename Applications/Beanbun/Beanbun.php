@@ -160,8 +160,10 @@ class Beanbun
     // 爬虫进程
     public function onWorkerStart($worker)
     {
-        sleep(1);
-        $this->setQueue();
+        $this->setQueue(null, [
+            'host' => \Config\Queue::$address,
+            'port' => \Config\Queue::$port
+        ]);
         $this->setDownloader();
         $this->setLog();
         foreach ($this->startWorkerHooks as $hook) {
