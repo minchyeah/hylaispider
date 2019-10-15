@@ -113,7 +113,7 @@ class Queue
     public function isQueued($queue)
     {
         if ($this->bloomFilter) {
-            return $this->globalData->bfIn($this->queuedKey, md5($queue));
+            return $this->globalData->bfIn($this->queuedKey, md5(serialize($queue)));
         } else {
             return in_array($queue, $this->globalData->{$this->queuedKey});
         }

@@ -16,9 +16,10 @@ class Beanbun
     public $name = null;
     public $max = 0;
     public $seed = [];
-    public $daemonize = true;
     public $urlFilter = [];
-    public $interval = 2;
+    public $listUrlFilter = [];
+    public $contentUrlFilter = [];
+    public $interval = 0.1;
     public $timeout = 5;
     public $userAgent = 'pc';
     public $logFile = '';
@@ -26,6 +27,7 @@ class Beanbun
 
     public $queue = '';
     public $url = '';
+    public $urlType = '';
     public $method = '';
     public $options = [];
     public $page = '';
@@ -92,9 +94,7 @@ class Beanbun
         $worker->onWorkerStop = [$this, 'onWorkerStop'];
         $this->worker = $worker;
 
-        //Worker::$daemonize = true;
         Worker::$stdoutFile = $this->logFile;
-        \Beanbun\Lib\Db::closeAll();
 
     }
 
@@ -165,7 +165,7 @@ class Beanbun
         ]);
         foreach ((array) $this->seed as $url) {
             if (is_string($url)) {
-                $this->queue()->add($url);
+                $this->queue()->add($url, ['url_type'=>'list']);
             } elseif (is_array($url)) {
                 $this->queue()->add($url[0], $url[1]);
             }
@@ -179,9 +179,6 @@ class Beanbun
         }
         
         $this->queueArgs['name'] = $this->name;
-
-        $this->queues = null;
-        $STDOUT = fopen($this->logFile, "a");
     }
 
     public function queue()
@@ -267,6 +264,7 @@ class Beanbun
 
     public function onWorkerStop($worker)
     {
+        sleep(1);
         foreach ($this->stopWorkerHooks as $hook) {
             call_user_func($hook, $this);
         }
@@ -280,30 +278,22 @@ class Beanbun
             }
         } elseif ($e instanceof Exception) {
             $this->log($e->getMessage());
-            if ($this->daemonize) {
-                $this->queue()->add($this->queue['url'], $this->queue['options']);
-            } else {
-                $this->seed[] = $this->queue;
-            }
+            $this->queue()->add($this->queue['url'], $this->queue['options']);
         }
     }
 
     public function defaultBeforeDownloadPage()
     {
-        if ($this->daemonize) {
-            if ($this->max > 0 && $this->queue()->queuedCount() >= $this->max) {
-                $this->log("Download to the upper limit, Beanbun worker {$this->id} stop downloading.");
-                self::timerDel($this->timer_id);
-                $this->error();
-            }
-
-            $this->queue = $queue = $this->queue()->next();
-        } else {
-            $queue = array_shift($this->seed);
+        if ($this->max > 0 && $this->queue()->queuedCount() >= $this->max) {
+            $this->log("Download to the upper limit, Beanbun worker {$this->id} stop downloading.");
+            self::timerDel($this->timer_id);
+            $this->error();
         }
 
+        $this->queue = $queue = $this->queue()->next();
+
         if (is_null($queue) || !$queue) {
-            sleep(30);
+            sleep(1);
             $this->error();
         }
 
@@ -316,13 +306,15 @@ class Beanbun
             $this->queue = $queue;
         }
 
+        $this->urlType = $queue['options']['url_type'] ? : 'list';
+
         $options = array_merge([
             'headers' => isset($this->options['headers']) ?: [],
             'reserve' => false,
             'timeout' => $this->timeout,
         ], (array) $queue['options']);
-        print_r($queue);
-        if ($this->daemonize && !$options['reserve'] && $this->queue()->isQueued($queue)) {
+
+        if (!$options['reserve'] && $this->queue()->isQueued($queue)) {
             $this->error();
         }
 
@@ -348,24 +340,39 @@ class Beanbun
 
     public function defaultDiscoverUrl()
     {
-        $countUrlFilter = count($this->urlFilter);
-        if ($countUrlFilter === 1 && !$this->urlFilter[0]) {
+        $urls = Helper::getUrlByHtml($this->page, $this->url);
+        $this->discoverListUrl($urls);
+        $this->discoverContentUrl($urls);
+    }
+
+    public function discoverListUrl($urls)
+    {
+        $count = count($this->listUrlFilter);
+        if ($count === 1 && !$this->listUrlFilter[0]) {
             $this->error();
         }
-
-        $urls = Helper::getUrlByHtml($this->page, $this->url);
-
-        if ($countUrlFilter > 0) {
-            foreach ($urls as $url) {
-                foreach ($this->urlFilter as $urlPattern) {
-                    if (preg_match($urlPattern, $url)) {
-                        $this->queue()->add($url);
-                    }
+        foreach ($urls as $url) {
+            foreach ($this->listUrlFilter as $urlPattern) {
+                if (preg_match($urlPattern, $url)) {
+                    $this->log("get list url from {$this->url} ". print_r($url, true).PHP_EOL);
+                    $this->queue()->add($url, ['url_type'=>'list']);
                 }
             }
-        } else {
-            foreach ($urls as $url) {
-                $this->queue()->add($url);
+        }
+    }
+
+    public function discoverContentUrl($urls)
+    {
+        $count = count($this->contentUrlFilter);
+        if ($count === 1 && !$this->contentUrlFilter[0]) {
+            $this->error();
+        }
+        foreach ($urls as $url) {
+            foreach ($this->contentUrlFilter as $urlPattern) {
+                if (preg_match($urlPattern, $url)) {
+                    $this->log("get content url from {$this->url} ". print_r($url, true).PHP_EOL);
+                    $this->queue()->add($url, ['url_type'=>'content']);
+                }
             }
         }
     }
