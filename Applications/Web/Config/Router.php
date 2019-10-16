@@ -9,6 +9,8 @@ class Router
 {
     public static $get = [
         '/' => 'Index@index',
+        '/login' => 'Index@login',
+        '/dologin' => 'Index@doLogin',
         '/balance' => 'Balance@index',
         '/balance/data' => 'Balance@data',
         '/balance/(\w+)' => 'Balance@detail',

@@ -32,8 +32,18 @@ class Server
         $worker->count = 1;
         $worker->name = 'QueueServer';
         $worker->onMessage = array($this, 'onMessage');
+        $worker->onWorkerStop = array($this, 'onStop');
         $worker->reloadable = false;
         $this->_worker = $worker;
+    }
+
+    /**
+     * onStop
+     * @return mixed 
+     */
+    public function onStop()
+    {
+        sleep(1);
     }
 
     /**

@@ -3,10 +3,10 @@
 namespace Web\Controller;
 
 use \Library\Db;
-use \Library\Huobi;
 use \Web\Common\Log;
 use \Web\Common\Template;
 use \Workerman\Connection\AsyncTcpConnection;
+use \Workerman\Protocols\Http;
 
 class Base
 {
@@ -23,12 +23,6 @@ class Base
     protected $globaldata = null;
 
     /**
-     * 火币API类库
-     * @var Library\Huobi
-     */
-    protected $huobi = null;
-
-    /**
      * 模板类库
      * @var Web\Common\Template
      */
@@ -41,12 +35,6 @@ class Base
     protected $sign;
 
     /**
-     * 网关地址
-     * @var array
-     */
-    protected $gateway = array();
-
-    /**
      * 异步连接实例
      * @var \Workerman\Connection\AsyncTcpConnection
      */
@@ -57,15 +45,38 @@ class Base
      */
 	public function __construct()
 	{
+        Http::sessionStart();
 		$this->view = new Template();
 		$this->db = Db::instance(\Config\Database::$master);
 		$this->globaldata = \GlobalData\Client::getInstance(\Config\GlobalData::$address . ':' . \Config\GlobalData::$port);
-        $this->huobi = Huobi::getInstance();
-        $this->sign = \Config\Timer::$gateway_sign;
-        $this->gateway = 'tcp://' . \Config\Gateway::$address . ':' . \Config\Gateway::$port;
-        $this->conn = new AsyncTcpConnection($this->gateway);
-        $this->conn->connect();
 	}
+
+    /**
+     * check user is login
+     * @return boolean
+     */
+    protected function isLogin()
+    {
+        return \Web\Config\Auth::$username == $_SESSION['auth'];
+    }
+
+    /**
+     * 验证登录信息
+     * @param  string $username 用户名
+     * @param  string $password 密码
+     * @return boolean
+     */
+    protected function checkLogin($username, $password)
+    {
+        if(\Web\Config\Auth::$username == $username && \Web\Config\Auth::$encrypted == md5(md5($password).\Web\Config\Auth::$salt)){
+            $_SESSION['auth'] = $username;
+            echo 'login success!';
+            return true;
+        }else{
+            echo 'login fail!';
+            return false;
+        }
+    }
 
     /**
      * 设置单个模板变量
@@ -178,41 +189,4 @@ class Base
         $this->render('404.html');
     }
 
-    /**
-     * 请求业务处理
-     * @param string $class  Business业务名,如果 Order\Timeout
-     * @param string $method 方法
-     * @param array $params 参数
-     * @return boolean
-     */
-    protected function business($class, $method, $params)
-    {
-        // 请求业务处理参数
-        $dataString = json_encode(array('class'=>$class,'method'=>$method,'params'=>$params,'client'=>'timer','sign'=>md5($class . $method . json_encode($params) . $this->sign)));
-        // 判断业务是否正在处理中
-        $call_id = md5($dataString);
-        if(!$this->globaldata->add($call_id, time())){
-            return false;
-        }
-        
-        if(!$this->conn){
-            // 建立异步链接
-            $this->conn = new AsyncTcpConnection($this->gateway);
-            $this->conn->connect();
-        }
-        // 发送数据
-        $this->conn->send($dataString . "\n");
-        // 异步获得结果
-        $this->conn->onMessage = function ($conn, $result)
-        {
-            // 处理结果
-            $res = explode("\n", trim($result));
-            foreach($res as $re){
-                $val = json_decode($re, true);
-                $call_id = $val['call_id'];
-                // 解除正在进行中的任务
-                unset($this->globaldata->$call_id);
-            }
-        };
-    }
 }

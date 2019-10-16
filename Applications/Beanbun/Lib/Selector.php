@@ -15,7 +15,7 @@
 
 namespace Beanbun\Lib;
 
-use Beanbun\Lib\Phpquery;
+use Beanbun\Lib\PhpQuery;
 use DOMDocument;
 use DOMXpath;
 use Exception;
