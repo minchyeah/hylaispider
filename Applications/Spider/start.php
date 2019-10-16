@@ -8,15 +8,11 @@ require_once dirname(__DIR__) . '/loader.php';
 $beanbun = new Beanbun;
 $beanbun->name = 'ZhongHuaSuan';
 $beanbun->count = 3;
-$beanbun->seed = 'https://list.zhonghuasuan.com/';
+$beanbun->seed = \Config\Spider::$scan_urls;
 $beanbun->max = 30;
 $beanbun->logFile = __DIR__ . '/zhonghuasuan_access.log';
-$beanbun->listUrlFilter = [
-    '/https:\/\/list.zhonghuasuan.com\/cat-0-0-(\d).html/',
-];
-$beanbun->contentUrlFilter = [
-    '/https:\/\/detail.zhonghuasuan.com\/(\d+).html/'
-];
+$beanbun->listUrlFilter = \Config\Spider::$list_url_regexes;
+$beanbun->contentUrlFilter = \Config\Spider::$content_url_regexes;
 // 设置队列
 $beanbun->setQueue('memory', [
         'host' => \Config\Queue::$address,
