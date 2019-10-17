@@ -182,6 +182,20 @@ class Client
         ),$connection);
         return $this->readFromRemote($connection);
     }
+
+    /**
+     * Update.
+     * @param  string $key
+     * @param  function $callback
+     * @return void
+     */
+    public function update($key, $callback)
+    {
+        do {
+            $old_value = $this->$key;
+            $new_value = $callback($old_value);
+        } while (!$this->cas($key, $old_value, $new_value));
+    }
     
     /**
      * Add.
