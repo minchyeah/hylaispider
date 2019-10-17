@@ -88,7 +88,7 @@ class Helper
         } elseif (strtolower(substr($I1, 0, 7)) == 'mailto:' || strtolower(substr($I1, 0, 11)) == 'javascript:') {
             return false;
         } else {
-            return $I1 = $l3 . $path . '/' . $I1;
+            return $I1 = $l3 . rtrim($path, '/') . '/' . $I1;
         }
     }
 
