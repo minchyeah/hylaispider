@@ -1,5 +1,5 @@
 <?php
-namespace Beanbun\Lib;
+namespace Spider;
 
 use InvalidArgumentException;
 use SplFixedArray;

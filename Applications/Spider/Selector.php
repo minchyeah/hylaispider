@@ -13,9 +13,9 @@
 // PHPSpider选择器类文件
 //----------------------------------
 
-namespace Beanbun\Lib;
+namespace Spider;
 
-use Beanbun\Lib\PhpQuery;
+use Spider\PhpQuery;
 use DOMDocument;
 use DOMXpath;
 use Exception;

@@ -1,15 +1,14 @@
 <?php
-namespace Beanbun;
+namespace Spider;
 
-use Beanbun\Exception\BeanbunException;
-use Beanbun\Lib\Helper;
-use Beanbun\Lib\Selector;
+use Spider\Helper;
+use Spider\Selector;
 use Exception;
 use GuzzleHttp\Client;
 use Workerman\Lib\Timer;
 use Workerman\Worker;
 
-class Beanbun
+class Spider
 {
     const VERSION = '1.0.4';
 
@@ -101,18 +100,18 @@ class Beanbun
 
     public function initHooks()
     {
-        $this->startWorkerHooks[] = function ($beanbun) {
-            $beanbun->id = $beanbun->worker->id;
-            $beanbun->log("Beanbun worker {$beanbun->id} is starting ...");
+        $this->startWorkerHooks[] = function ($spider) {
+            $spider->id = $spider->worker->id;
+            $spider->log("Spider worker {$spider->id} is starting ...");
         };
 
         if ($this->startWorker) {
             $this->startWorkerHooks[] = $this->startWorker;
         }
 
-        $this->startWorkerHooks[] = function ($beanbun) {
-            $beanbun->queue()->maxQueueSize = $beanbun->max;
-            $beanbun->timer_id = Beanbun::timer($beanbun->interval, [$beanbun, 'crawler']);
+        $this->startWorkerHooks[] = function ($spider) {
+            $spider->queue()->maxQueueSize = $spider->max;
+            $spider->timer_id = Spider::timer($spider->interval, [$spider, 'crawler']);
         };
 
         $this->beforeDownloadPageHooks[] = [$this, 'defaultBeforeDownloadPage'];
@@ -141,9 +140,9 @@ class Beanbun
             $this->afterDiscoverHooks[] = $this->afterDiscover;
         }
 
-        $this->afterDiscoverHooks[] = function ($beanbun) {
-            if ($beanbun->options['reserve'] == false) {
-                $beanbun->queue()->queued($beanbun->queue);
+        $this->afterDiscoverHooks[] = function ($spider) {
+            if ($spider->options['reserve'] == false) {
+                $spider->queue()->queued($spider->queue);
             }
         };
 
@@ -229,15 +228,15 @@ class Beanbun
     public function setLog($callback = null)
     {
         $this->logFactory = $callback === null
-        ? function ($msg, $beanbun) {
-            echo date('Y-m-d H:i:s') . " {$beanbun->name} : $msg\n";
+        ? function ($msg, $spider) {
+            echo date('Y-m-d H:i:s') . " {$spider->name} : $msg\n";
         }
         : $callback;
     }
 
     public function error($msg = null)
     {
-        throw new BeanbunException($msg);
+        throw new Exception($msg);
     }
 
     public function crawler()
@@ -274,7 +273,7 @@ class Beanbun
 
     public function defaultExceptionHandler(Exception $e)
     {
-        if ($e instanceof BeanbunException) {
+        if ($e instanceof Exception) {
             if ($e->getMessage()) {
                 $this->log($e->getMessage());
             }
@@ -287,7 +286,7 @@ class Beanbun
     public function defaultBeforeDownloadPage()
     {
         if ($this->max > 0 && $this->queue()->queuedCount() >= $this->max) {
-            $this->log("Download to the upper limit, Beanbun worker {$this->id} stop downloading.");
+            $this->log("Download to the upper limit, Spider worker {$this->id} stop downloading.");
             self::timerDel($this->timer_id);
             $this->error();
         }
@@ -338,7 +337,7 @@ class Beanbun
         $this->page = $response->getBody();
         if ($this->page) {
             $worker_id = isset($this->id) ? $this->worker->id : '';
-            $this->log("Beanbun worker {$worker_id} download {$this->url} success.");
+            $this->log("Spider worker {$worker_id} download {$this->url} success.");
         } else {
             $this->error();
         }

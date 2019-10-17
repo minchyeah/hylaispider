@@ -1,11 +1,12 @@
 <?php
 
-use Beanbun\Beanbun;
-use Beanbun\Lib\Helper;
+use Spider\Spider;
+use Spider\Helper;
 
 // 自动加载类
 require_once dirname(__DIR__) . '/loader.php';
-$beanbun = new Beanbun;
+
+$beanbun = new Spider;
 $beanbun->name = 'ZhongHuaSuan';
 $beanbun->count = 3;
 $beanbun->seed = \Config\Spider::$scan_urls;

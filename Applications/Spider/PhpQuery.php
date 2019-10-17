@@ -12,7 +12,7 @@
  * @package PhpQuery
  */
 
-namespace Beanbun\Lib;
+namespace Spider;
 use DOMDocument;
 use DOMXpath;
 use Exception;

@@ -1,5 +1,5 @@
 <?php
-namespace Beanbun\Lib;
+namespace Spider;
 
 class Helper
 {
