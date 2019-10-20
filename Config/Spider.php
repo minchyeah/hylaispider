@@ -50,7 +50,7 @@ class Spider
     public static $fields = array(
         // 标题
         array(
-            'name' => 'title',
+            'name' => 'subject',
             'selector' => '//h1[contains(@id,"subject_tpc")]',
             'required' => true,
             'filter' => '/<a[\s]+([^>]+)>((?:.(?!\<\/a\>))*.)<\/a>/',

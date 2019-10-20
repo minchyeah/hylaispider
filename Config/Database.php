@@ -32,12 +32,12 @@ class Database
 	 * 从库配置(只读)
 	 * @var array
 	 */
-	public static $slave = array(
-		'host'		=> '172.31.0.2',
+	public static $hylai = array(
+		'host'		=> '172.31.0.1',
 		'port'		=> '3306',
 		'user'		=> 'root',
 		'password'	=> '111111',
-		'dbname'	=> 'bitting',
+		'dbname'	=> 'www_pw_com',
 		'charset'	=> 'utf8',
 	);
 

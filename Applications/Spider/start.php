@@ -2,6 +2,7 @@
 
 use Spider\Spider;
 use Spider\Helper;
+use Library\Db;
 
 // 自动加载类
 require_once dirname(__DIR__) . '/loader.php';
@@ -23,9 +24,21 @@ $spider->afterDownloadPage = function($spider) {
 	if($spider->urlType != 'content'){
         return;
     }
+    preg_match('/tid=(\d+)/', $spider->url, $matches);
+    if(!isset($matches[1]) || !is_numeric($matches[1])){
+        return;
+    }
+    $db = Db::instance(\Config\Database::$hylai);
+    $data = array();
+    $data['tid'] = $matches[1];
+    $row = $db->select('id,tid')->from('pw_spider')->where('tid', $data['tid'])->row();
+    if(isset($row['id']) && $row['id'] > 0){
+        return;
+    }
+    $data['url'] = '"'.$spider->url.'"';
+    $data['spide_time'] = time();
     $html = $spider->page;
     $fields = \Config\Spider::$fields;
-    $data = array();
     foreach ($fields as $conf)
     {
         // 当前field抽取到的内容是否是有多项
@@ -60,7 +73,12 @@ $spider->afterDownloadPage = function($spider) {
                 $values = preg_replace($conf['filter'], '', $values);
         }
         $spider->log(print_r($values, true));
+        if($conf['name'] == 'post_time'){
+            $values = strtotime($values);
+        }
+        $data[$conf['name']] = '"'.addslashes($values).'"';
     }
+    $db->insert('pw_spider')->setCols($data)->query();
 };
 $spider->start();
 
