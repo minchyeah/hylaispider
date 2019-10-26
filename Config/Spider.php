@@ -24,7 +24,7 @@ class Spider
     public static $content_url_regexes = array(
         '/https:\/\/detail.zhonghuasuan.com\/(\d+).html/',
         '/http:\/\/www.pw.com\/read.php\?tid=(\d+)/',
-        '/http:\/\/www.hyl999.vip\/read.php\?tid=(\d+)(&fpage=(\d+)*)$/',
+        '/http:\/\/www.hyl999.vip\/read.php\?tid=(\d+)(&fpage=(\d+))*$/',
     );
 
     // public static $fields = array(

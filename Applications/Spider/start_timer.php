@@ -31,13 +31,23 @@ $worker->onWorkerStart = function () use ($worker)
 function post($worker)
 {
     $db = Db::instance(\Config\Database::$hylai);
-    $row = $db->select('*')->from('pw_spider')->where('new_tid', 0)->where('state', 0)->order('id ASC')->limit(1)->row();
+    $row = $db->select('*')->from('pw_spider')
+            ->where('new_tid', 0)
+            ->where('state', 0)
+            ->order('id ASC')
+            ->limit(1)
+            ->row();
     if(!isset($row['id'])){
         Workerman\Lib\Timer::add(2, 'post', array($worker), false);
         return;
     }
-    $rs = $db->update('pw_spider')->set('state', 1)->where('id', $row['id'])->query();
-    if(!$rs){
+    $rs = $db->update('pw_spider')
+            ->set('state', 1)
+            ->where('id', $row['id'])
+            ->where('new_tid', 0)
+            ->where('state', 0)
+            ->query();
+    if($rs !== 1){
         Workerman\Lib\Timer::add(0.3, 'post', array($worker), false);
         return;
     }
@@ -113,7 +123,18 @@ function post($worker)
     ];
     $rs = $db->insert('pw_tmsgs')->cols($tmsgData)->query();
     if($rs){
-        $db->update('pw_spider')->set('new_tid', $tid)->set('new_post_time', time())->where('tid', $row['tid'])->query();
+        $pud = $db->update('pw_spider')
+            ->set('new_tid', $tid)
+            ->set('state', 2)
+            ->set('new_post_time', time())
+            ->where('id', $row['id'])
+            ->where('tid', $row['tid'])
+            ->where('state', 1)
+            ->query();
+        if(!$pud){
+            $db->delete('pw_threads')->where('tid', $row['tid'])->query();
+            $db->delete('pw_tmsgs')->where('tid', $row['tid'])->query();
+        }
     }
     Workerman\Lib\Timer::add(0.03, 'post', array($worker), false);
 }
