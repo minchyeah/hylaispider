@@ -9,7 +9,7 @@ require_once dirname(__DIR__) . '/loader.php';
 
 $spider = new Spider;
 $spider->name = \Config\Spider::$name;
-$spider->count = 3;
+$spider->count = 5;
 $spider->seed = \Config\Spider::$scan_urls;
 $spider->max = 30;
 $spider->logFile = __DIR__ . '/zhonghuasuan_access.log';
@@ -35,7 +35,7 @@ $spider->afterDownloadPage = function($spider) {
     if(isset($row['id']) && $row['id'] > 0){
         return;
     }
-    $data['url'] = '"'.$spider->url.'"';
+    $data['url'] = $spider->url;
     $data['spide_time'] = time();
     $html = $spider->page;
     $fields = \Config\Spider::$fields;
@@ -72,13 +72,13 @@ $spider->afterDownloadPage = function($spider) {
         if(isset($conf['filter']) && $conf['filter'] && $values){
                 $values = preg_replace($conf['filter'], '', $values);
         }
-        $spider->log(print_r($values, true));
+        //$spider->log(print_r($values, true));
         if($conf['name'] == 'post_time'){
             $values = strtotime($values);
         }
-        $data[$conf['name']] = '"'.addslashes($values).'"';
+        $data[$conf['name']] = $values;
     }
-    $db->insert('pw_spider')->setCols($data)->query();
+    $db->insert('pw_spider')->cols($data)->query();
 };
 $spider->start();
 

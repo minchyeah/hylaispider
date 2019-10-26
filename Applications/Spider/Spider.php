@@ -229,7 +229,7 @@ class Spider
     {
         $this->logFactory = $callback === null
         ? function ($msg, $spider) {
-            echo date('Y-m-d H:i:s') . " {$spider->name} : $msg\n";
+            echo date('Y-m-d H:i:s ') . $msg . PHP_EOL;
         }
         : $callback;
     }
