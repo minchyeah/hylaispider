@@ -61,7 +61,8 @@
                     {field: 'cash_price', title: '现价', width: 120, titleAlign: 'center',columnAlign:'right',isResize:true},
                     {field: 'gainloss', title: '盈亏', width: 120, titleAlign: 'center',columnAlign:'center',isResize:true},
                     {field: 'gainloss_rate', title: '盈亏比', width: 100, titleAlign: 'center',columnAlign:'center',isResize:true}
-                ]
+                ],
+                footer: []
             }
         },
         methods:{
@@ -80,6 +81,41 @@
                 }
             },
 
+            setFooterData(){
+                let result = [],
+                    usdt_amount = this.tableData.map(item => {
+                        return item.usdt_amount
+                    }),
+                    cash_amount = this.tableData.map(item => {
+                        return item.cash_amount
+                    }),
+                    gainloss = this.tableData.map(item => {
+                        return item.gainloss
+                    });
+
+                let sumVal = ['-','-','成本值'];
+                sumVal.push(
+                    usdt_amount.reduce((prev, curr) => {
+                        return parseInt(prev) + parseInt(curr);
+                    }, 0)+' USDT'
+                )
+                sumVal.push('现值')
+                sumVal.push(
+                    cash_amount.reduce((prev, curr) => {
+                        return parseInt(prev) + parseInt(curr);
+                    }, 0)+' USDT'
+                )
+                sumVal.push('盈亏')
+                sumVal.push(
+                    gainloss.reduce((prev, curr) => {
+                        return parseInt(prev) + parseInt(curr);
+                    }, 0)+' USDT'
+                )
+                sumVal.push('-');
+                result.push(sumVal);
+                this.footer = result;
+            },
+
             rowClick(rowIndex,rowData){
                 console.log(rowIndex);
                 console.log(rowData);
@@ -92,6 +128,8 @@
             }
         }
     });
+
+    v.setFooterData();
 
     setInterval(function(){
         v.request();

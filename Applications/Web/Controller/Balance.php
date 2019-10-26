@@ -18,7 +18,7 @@ class Balance extends Base
 
 	public function data($return = false)
 	{
-		$balance = $this->db->select('currency, amount, frozen, usdt_amount, usdt_price, lasttime')
+		$balance = $this->db()->select('currency, amount, frozen, usdt_amount, usdt_price, lasttime')
 					->from('balance')->where('currency<>', 'usdt')->where('currency<>', 'btt')->query();
 		if(is_array($balance)){
 			foreach ($balance as $key => &$value) {

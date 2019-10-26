@@ -3,6 +3,7 @@
 namespace Web\Controller;
 
 use \Library\Db;
+use \Library\Huobi;
 use \Web\Common\Log;
 use \Web\Common\Template;
 use \Workerman\Connection\AsyncTcpConnection;
@@ -11,34 +12,22 @@ use \Workerman\Protocols\Http;
 class Base
 {
     /**
-     * 数据库连接
-     * @var \Library\DbConnection
+     * 网关异步连接实例
+     * @var array
      */
-    protected $db;
-
-    /**
-     * 变量共享组件
-     * @var GlobalData\Client
-     */
-    protected $globaldata = null;
-
-    /**
-     * 模板类库
-     * @var Web\Common\Template
-     */
-    protected $view = null;
+    protected static $gatewayConn = null;
 
     /**
      * 网关签名密钥
      * @var string
      */
-    protected $sign;
+    protected $gateway_sign;
 
     /**
-     * 异步连接实例
-     * @var \Workerman\Connection\AsyncTcpConnection
+     * sessionId
+     * @var string
      */
-    protected $conn = null;
+    protected $sessionId = '';
 
     /**
      * 构造函数
@@ -46,10 +35,23 @@ class Base
 	public function __construct()
 	{
         Http::sessionStart();
-		$this->view = new Template();
-		$this->db = Db::instance(\Config\Database::$master);
-		$this->globaldata = \GlobalData\Client::getInstance(\Config\GlobalData::$address . ':' . \Config\GlobalData::$port);
+        $this->sessionId = Http::sessionId();
+        $_SESSION['id'] = $this->sessionId;
+        if(!$this->isLogin() && !($this instanceof \Web\Controller\Auth)){
+            $this->redirect('/login/');
+        }
+        $this->gateway_sign = \Config\Timer::$gateway_sign;
 	}
+
+    /**
+     * redirect
+     * @param  string $url
+     * @return void
+     */
+    protected function redirect($url='')
+    {
+        Http::header('Location:'.$url, true, 302);
+    }
 
     /**
      * check user is login
@@ -57,25 +59,62 @@ class Base
      */
     protected function isLogin()
     {
-        return \Web\Config\Auth::$username == $_SESSION['auth'];
+        $skey = \Web\Config\Auth::$prefix . $this->sessionId;
+        if (\Web\Config\Auth::$username != $this->gdata($skey)) {
+            return false;
+        }else{
+            $this->gexpire($skey, \Web\Config\Auth::$expire);
+            return true;
+        }
     }
 
     /**
-     * 验证登录信息
-     * @param  string $username 用户名
-     * @param  string $password 密码
-     * @return boolean
+     * 数据库连接
+     * @return \Library\DbConnection
      */
-    protected function checkLogin($username, $password)
+    protected function db()
     {
-        if(\Web\Config\Auth::$username == $username && \Web\Config\Auth::$encrypted == md5(md5($password).\Web\Config\Auth::$salt)){
-            $_SESSION['auth'] = $username;
-            echo 'login success!';
-            return true;
-        }else{
-            echo 'login fail!';
-            return false;
+        return Db::instance(\Config\Database::$master);
+    }
+
+    /**
+     * 网关异步连接实例
+     * @return AsyncTcpConnection
+     */
+    protected function gateway()
+    {
+        if(!isset(self::$gatewayConn) OR !self::$gatewayConn){
+            self::$gatewayConn = new AsyncTcpConnection('tcp://' . \Config\Gateway::$address . ':' . \Config\Gateway::$port);
+            self::$gatewayConn->connect();
         }
+        return self::$gatewayConn;
+    }
+
+    /**
+     * 变量共享组件
+     * @return GlobalData\Client
+     */
+    protected function globaldata()
+    {
+        return \GlobalData\Client::getInstance(\Config\GlobalData::$address . ':' . \Config\GlobalData::$port);
+    }
+
+    /**
+     * 火币API类库
+     * @var Library\Huobi
+     */
+    protected function huobi()
+    {
+        return Huobi::getInstance();
+    }
+
+    /**
+     * 模板类库
+     * @var Web\Common\Template
+     */
+    protected function view()
+    {
+        return Template::getInstance();
     }
 
     /**
@@ -85,7 +124,7 @@ class Base
      */
 	protected function set($key, $value)
 	{
-		$this->view->setVar($key, $value);
+		$this->view()->setVar($key, $value);
 	}
 
     /**
@@ -94,7 +133,7 @@ class Base
      */
 	protected function sets($vars)
 	{
-		$this->view->setVars($vars);
+		$this->view()->setVars($vars);
 	}
 
     /**
@@ -103,8 +142,8 @@ class Base
      */
 	protected function render($tpl)
 	{
-		$this->view->setFile(dirname(__DIR__).'/View/'.$tpl);
-		echo $this->view->render();
+		$this->view()->setFile(dirname(__DIR__).'/View/'.$tpl);
+		echo $this->view()->render();
 	}
 
     /**
@@ -113,7 +152,7 @@ class Base
      */
     protected function gdata($key)
     {
-        return $this->globaldata->$key;
+        return $this->globaldata()->$key;
     }
 
     /**
@@ -126,7 +165,7 @@ class Base
      */
     protected function gadd($key, $value, $expire = 0)
     {
-        return $this->globaldata->add($key, $value, $expire);
+        return $this->globaldata()->add($key, $value, $expire);
     }
 
     /**
@@ -137,7 +176,7 @@ class Base
      */
     protected function gcas($key, $old_value, $new_value)
     {
-        return $this->globaldata->cas($key, $old_value, $new_value);
+        return $this->globaldata()->cas($key, $old_value, $new_value);
     }
 
     /**
@@ -148,7 +187,7 @@ class Base
      */
     protected function gexpire($key, $expire = 0)
     {
-        return $this->globaldata->expire($key, $expire);
+        return $this->globaldata()->expire($key, $expire);
     }
 
     /**
@@ -158,7 +197,7 @@ class Base
      */
     protected function gset($key, $value)
     {
-        $this->globaldata->$key = $value;
+        $this->globaldata()->$key = $value;
     }
 
     /**
@@ -167,7 +206,7 @@ class Base
      */
     protected function gunset($key)
     {
-        unset($this->globaldata->$key);
+        unset($this->globaldata()->$key);
     }
 
 	/**
@@ -189,4 +228,36 @@ class Base
         $this->render('404.html');
     }
 
+    /**
+     * 请求业务处理
+     * @param string $class  Business业务名,如果 Order\Timeout
+     * @param string $method 方法
+     * @param array $params 参数
+     * @return boolean
+     */
+    protected function business($class, $method, $params)
+    {
+        // 请求业务处理参数
+        $dataString = json_encode(array('class'=>$class,'method'=>$method,'params'=>$params,'client'=>'timer','sign'=>md5($class . $method . json_encode($params) . $this->gateway_sign)));
+        // 判断业务是否正在处理中
+        $call_id = md5($dataString);
+        if(!$this->gadd($call_id, time())){
+            return false;
+        }
+        // 发送数据
+        $this->gateway()->send($dataString . "\n");
+        // 异步获得结果
+        $this->gateway()->onMessage = function ($conn, $result)
+        {
+            // 处理结果
+            $res = explode("\n", trim($result));
+            foreach($res as $re){
+                $val = json_decode($re, true);
+                $call_id = $val['call_id'];
+                // 解除正在进行中的任务
+                $this->gunset($call_id);
+            }
+        };
+        return true;
+    }
 }

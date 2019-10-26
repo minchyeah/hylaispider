@@ -48,6 +48,24 @@ class Router
     private $namespace = '';
 
     /**
+     * 静态实例
+     * @var Router
+     */
+    protected static $instance = null;
+
+    /**
+     * 获取静态实例
+     * @return Router
+     */
+    public static function getInstance()
+    {
+        if(!isset(self::$instance) OR !self::$instance){
+            self::$instance = new self();
+        }
+        return self::$instance;
+    }
+
+    /**
      * Store a before middleware route and a handling function to be executed when accessed using one of the specified methods.
      *
      * @param string          $methods Allowed methods, | delimited
@@ -358,9 +376,9 @@ class Router
                 }, $matches, array_keys($matches));
 
                 // Call the handling function with the URL parameters if the desired input is callable
-                $this->invoke($route['fn'], $params);
-
-                ++$numHandled;
+                if (true === $this->invoke($route['fn'], $params)) {
+                    ++$numHandled;
+                }
 
                 // If we need to quit, then quit
                 if ($quitAfterRun) {
@@ -373,12 +391,18 @@ class Router
         return $numHandled;
     }
 
+    /**
+     * invoke router dispatch
+     * @param  mixed $fn     [description]
+     * @param  array  $params [description]
+     * @return boolean
+     */
     private function invoke($fn, $params = [])
     {
         if (is_callable($fn)) {
             call_user_func_array($fn, $params);
+            return true;
         }
-
         // If not, check the existence of special parameters
         elseif (stripos($fn, '@') !== false) {
             // Explode segments of given route
@@ -389,14 +413,23 @@ class Router
             }
             // Check if class exists, if not just ignore and check if the class exists on the default namespace
             if (class_exists($controller)) {
-                // First check if is a static method, directly trying to invoke it.
-                // If isn't a valid static method, we will try as a normal method invocation.
-                if (call_user_func_array([new $controller(), $method], $params) === false) {
-                    // Try to call the method as an non-static method. (the if does nothing, only avoids the notice)
-                    if (forward_static_call_array([$controller, $method], $params) === false);
+                // try to invoke controller method by ReflectionMethod 
+                try {
+                    $ctrl = new \ReflectionMethod($controller, $method);
+                    if ($ctrl->isPublic()) {
+                        if (is_array($params) && !empty($params)) {
+                            $ctrl->invokeArgs(new $ctrl->class, $params);
+                        } else {
+                            $ctrl->invoke(new $ctrl->class);
+                        }
+                        return true;
+                    }
+                } catch(ReflectionException $e) {
+                    //TODO somthing here...;
                 }
             }
         }
+        return false;
     }
 
     /**

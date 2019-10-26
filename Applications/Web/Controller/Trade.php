@@ -22,7 +22,7 @@ ORDER BY kid ASC
 ) a,
 (SELECT @a.{$field}:=0) s;";
 
-		$rows = $this->db->query($sql);
+		$rows = $this->db()->query($sql);
 		if(is_array($rows)){
 			foreach ($rows as $key => $row) {
 			}

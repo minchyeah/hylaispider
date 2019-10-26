@@ -22,7 +22,7 @@ class Margin extends Base
 	        $this->symbol = 'btcusdt';
 	    }
 	    $data = [];
-	    $balances = $this->huobi->margin_balance();
+	    $balances = $this->huobi()->margin_balance();
 	    if(is_array($balances) && '' == $this->symbol){
 	        foreach ($balances as $balance){
 	            if($balance['fl-price'] == 0 && $balance['fl-type'] == 'safe'){

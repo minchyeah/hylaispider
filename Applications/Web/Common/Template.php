@@ -39,13 +39,31 @@ class Template
     protected $values = array();
 
     /**
+     * 静态实例
+     * @var Template
+     */
+    protected static $instance = null;
+
+    /**
+     * 获取静态实例
+     * @return Template
+     */
+    public static function getInstance()
+    {
+        if(!isset(self::$instance) OR !self::$instance){
+            self::$instance = new self();
+        }
+        return self::$instance;
+    }
+
+    /**
      * Constructor.
      * @param  string $file
      * @param  string $openDelimiter
      * @param  string $closeDelimiter
      * @throws InvalidArgumentException
      */
-    public function __construct($file = '', $openDelimiter = '{', $closeDelimiter = '}')
+    protected function __construct($file = '', $openDelimiter = '{', $closeDelimiter = '}')
     {
         if('' !== $file){
             $this->setFile($file);

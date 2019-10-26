@@ -5,14 +5,18 @@ use \Web\Common\Router;
 
 Log::init();
 
-$router = new Router();
+$router = Router::getInstance();
 $router->setBasePath('/');
 $router->setNamespace('\Web\Controller');
 
-$router->set404('Index@notfound');
+$router->set404('Auth@notfound');
 
 array_walk(\Web\Config\Router::$get, function($value, $key) use($router){
 	$router->get($key, $value);
+});
+
+array_walk(\Web\Config\Router::$post, function($value, $key) use($router){
+	$router->post($key, $value);
 });
 
 $router->run();
