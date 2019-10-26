@@ -21,7 +21,7 @@ require_once dirname(__DIR__) . '/loader.php';
 // TimerWorker
 $worker = new \Workerman\Worker();
 $worker->count = 3;
-$worker->name = 'SpiderTimer';
+$worker->name = 'PosterWorker';
 $worker->onWorkerStart = function () use ($worker)
 {
     // 触发任务
@@ -51,7 +51,7 @@ function post($worker)
         Workerman\Lib\Timer::add(0.3, 'post', array($worker), false);
         return;
     }
-    echo date('Y-m-d H:i:s') . ' Timer Worker:' . $worker->id.' 正在发布： '.$row['url'].PHP_EOL;
+    echo date('Y-m-d H:i:s') . ' Poster Worker:' . $worker->id.' 正在发布： '.$row['url'].PHP_EOL;
     $threadData = [
         'fid' => 8,
         'icon' => 0,
@@ -77,7 +77,7 @@ function post($worker)
         'digest' => 0,
         'special' => 0,
         'state' => 0,
-        'ifupload' => 1,
+        'ifupload' => 0,
         'ifmail' => 0,
         'ifmark' => 0,
         'ifshield' => 0,
@@ -97,10 +97,10 @@ function post($worker)
     ];
     $tid = $db->insert('pw_threads')->cols($threadData)->query();
     if(!$tid){
-        echo date('Y-m-d H:i:s') . ' Timer Worker:' . $worker->id . ' 发布失败'.PHP_EOL;
+        echo date('Y-m-d H:i:s') . ' Poster Worker:' . $worker->id . ' 发布失败'.PHP_EOL;
         return false;
     }
-    echo date('Y-m-d H:i:s') . ' Timer Worker:' . $worker->id . ' 发布成功 new tid: '.$tid.PHP_EOL;
+    echo date('Y-m-d H:i:s') . ' Poster Worker:' . $worker->id . ' 发布成功 new tid: '.$tid.PHP_EOL;
 
     $tmsgData = [
         'tid' => $tid,

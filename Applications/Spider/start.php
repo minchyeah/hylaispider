@@ -8,11 +8,11 @@ use Library\Db;
 require_once dirname(__DIR__) . '/loader.php';
 
 $spider = new Spider;
-$spider->name = \Config\Spider::$name;
+$spider->name = 'SpiderWorker';//\Config\Spider::$name;
 $spider->count = 5;
 $spider->seed = \Config\Spider::$scan_urls;
 $spider->max = 30;
-$spider->logFile = __DIR__ . '/zhonghuasuan_access.log';
+$spider->logFile = __DIR__ . '/SpiderWorker_access.log';
 $spider->listUrlFilter = \Config\Spider::$list_url_regexes;
 $spider->contentUrlFilter = \Config\Spider::$content_url_regexes;
 // 设置队列
