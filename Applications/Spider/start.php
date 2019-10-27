@@ -28,7 +28,7 @@ $spider->afterDownloadPage = function($spider) {
     if(!isset($matches[1]) || !is_numeric($matches[1])){
         return;
     }
-    $db = Db::instance(\Config\Database::$hylai);
+    $db = Db::instance(\Config\Database::$default);
     $data = array();
     $data['tid'] = $matches[1];
     $row = $db->select('id,tid')->from('pw_spider')->where('tid', $data['tid'])->row();

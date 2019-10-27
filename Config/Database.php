@@ -16,15 +16,28 @@ class Database
 	 */
 	
 	/**
+	 * 默认配置
+	 * @var array
+	 */
+	public static $default = array(
+		'host'		=> '172.31.0.1',
+		'port'		=> '3306',
+		'user'		=> 'root',
+		'password'	=> '111111',
+		'dbname'	=> 'www_pw_com',
+		'charset'	=> 'utf8',
+	);
+	
+	/**
 	 * 主库配置(读写)
 	 * @var array
 	 */
 	public static $master = array(
-		'host'		=> '172.31.0.2',
+		'host'		=> '172.31.0.1',
 		'port'		=> '3306',
 		'user'		=> 'root',
 		'password'	=> '111111',
-		'dbname'	=> 'bitting',
+		'dbname'	=> 'www_pw_com',
 		'charset'	=> 'utf8',
 	);
 	
@@ -32,7 +45,7 @@ class Database
 	 * 从库配置(只读)
 	 * @var array
 	 */
-	public static $hylai = array(
+	public static $slave = array(
 		'host'		=> '172.31.0.1',
 		'port'		=> '3306',
 		'user'		=> 'root',

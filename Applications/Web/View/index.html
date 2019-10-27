@@ -13,15 +13,7 @@
     <!-- 头部区域（可配合layui已有的水平导航） -->
     <ul class="layui-nav layui-layout-left">
       <li class="layui-nav-item"><a href="">采集管理</a></li>
-      <li class="layui-nav-item"><a href="/users/" target="iframe">用户</a></li>
-      <li class="layui-nav-item">
-        <a href="javascript:;">其它系统</a>
-        <dl class="layui-nav-child">
-          <dd><a href="">邮件管理</a></dd>
-          <dd><a href="">消息管理</a></dd>
-          <dd><a href="">授权管理</a></dd>
-        </dl>
-      </li>
+      <li class="layui-nav-item"><a href="/users/" target="iframe">采集用户</a></li>
     </ul>
     <ul class="layui-nav layui-layout-right">
       <li class="layui-nav-item">
@@ -42,8 +34,8 @@
         <li class="layui-nav-item layui-nav-itemed">
           <a class="" href="javascript:;">采集管理</a>
           <dl class="layui-nav-child">
-            <dd><a href="/setting/" target="iframe">站点设置</a></dd>
             <dd><a href="/collections/" target="iframe">采集列表</a></dd>
+            <dd><a href="/setting/" target="iframe">站点设置</a></dd>
             <dd><a href="javascript:;">列表三</a></dd>
             <dd><a href="">超链接</a></dd>
           </dl>
@@ -56,8 +48,8 @@
   
   <div class="layui-body">
     <!-- 内容主体区域 -->
-    <div style="padding: 15px; height: 100%;">
-          <iframe name='iframe' src="/setting/" width='100%' height="100%" frameborder="0"></iframe>
+    <div style="padding: 0; height: 100%;">
+          <iframe name='iframe' src="/collections/" width='100%' height="100%" frameborder="0"></iframe>
     </div>
   </div>
   

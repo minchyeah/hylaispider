@@ -72,9 +72,12 @@ class Base
      * 数据库连接
      * @return \Library\DbConnection
      */
-    protected function db()
+    protected function db($conn = 'master')
     {
-        return Db::instance(\Config\Database::$master);
+        if(isset(\Config\Database::$$conn)){
+            return Db::instance(\Config\Database::$$conn);
+        }
+        return Db::instance(\Config\Database::$default);
     }
 
     /**

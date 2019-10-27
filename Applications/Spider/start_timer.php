@@ -30,7 +30,7 @@ $worker->onWorkerStart = function () use ($worker)
 
 function post($worker)
 {
-    $db = Db::instance(\Config\Database::$hylai);
+    $db = Db::instance(\Config\Database::$default);
     $row = $db->select('*')->from('pw_spider')
             ->where('new_tid', 0)
             ->where('state', 0)

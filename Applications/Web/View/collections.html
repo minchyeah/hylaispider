@@ -1,15 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-<title>采集列表</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <title>采集列表</title>
 
-<link rel="stylesheet" href="/layui/css/layui.css">
+  <link rel="stylesheet" href="/layui/css/layui.css">
 
-<style>
-body{padding: 20px; /*overflow-y: scroll;*/}
-</style>
+  <style>
+    body{padding: 20px; /*overflow-y: scroll;*/}
+  </style>
 </head>
 <body>
 
@@ -53,187 +53,13 @@ body{padding: 20px; /*overflow-y: scroll;*/}
   <span {{# if(!d.activate){ }}style="color:#999"{{# } }}>{{ d.email }}</span>
 </script>
 
-<table id="test2" lay-filter="test2"></table>
-
-<div style="display: none1;">
-  <table class="layui-table1" lay-data="{width:800, height: 300, url:'json/table/demo2.json', page: true, limit: 6}">
-    <thead>
-      <tr>
-        <th lay-data="{checkbox:true, fixed:'left'}" rowspan="2"></th>
-        <th lay-data="{field:'username', width:80}" rowspan="2">联系人</th>
-        <th lay-data="{field:'amount', width:120}" rowspan="2">金额</th>
-        <th lay-data="{align:'center'}" colspan="3">地址</th>
-        <th lay-data="{fixed: 'right', width: 155, align: 'center', toolbar: '#barDemo'}" rowspan="2">操作</th>
-      </tr>
-      <tr>
-        <th lay-data="{field:'province', width:130}">省</th>
-        <th lay-data="{field:'city', width:130}">市</th>
-        <th lay-data="{field:'zone', width:200}">区</th>
-      </tr>
-    </thead>
-  </table>
-
-  <table class="layui-table" lay-data="{url:'json/table/demo2.json', toolbar: '#toolbarDemo', page: true, limit: 6}">
-    <thead>
-      <tr>
-        <th lay-data="{field:'username'}" rowspan="3">联系人</th>
-        <th lay-data="{field:'amount', width:120,hide:1}" rowspan="3">金额</th>
-        <th lay-data="{align:'center'}" colspan="5">地址1</th>
-        <th lay-data="{align:'center'}" colspan="2">地址2</th>
-        <th lay-data="{fixed: 'right', width: 120, align: 'center', toolbar: '#barDemo'}" rowspan="3">操作</th>
-      </tr>
-      <tr>
-        <th lay-data="{field:'province', width:120,hide:1}" rowspan="2">省</th>
-        <th lay-data="{field:'city', width:80,hide:1}" rowspan="2">市</th>
-        <th lay-data="{align:'center'}" colspan="2">详细</th>
-        <th lay-data="{field:'zone'}" rowspan="2">区</th>
-        <th lay-data="{field:'province', width:80}" rowspan="2">省</th>
-        <th lay-data="{field:'city', width:80}" rowspan="2">市</th>
-      </tr>
-      <tr>
-        <th lay-data="{field:'address', width:120,hide:1}">小区</th>
-        <th lay-data="{field:'house', width:150,hide:1}">单元</th>
-      </tr>
-    </thead>
-  </table>
-
-  <table id="demo"></table>
-
-
-  <div class="layui-btn-group">
-    <button class="layui-btn" data-type="parseTable">转化为数据表格</button>
-  </div>
-
-  <table class="layui-table" lay-skin="line" lay-filter="parse-table-demo">
-    <thead>
-      <tr>
-        <th lay-data="{checkbox:true}"></th>
-        <th lay-data="{field:'username', width:200}">昵称</th>
-        <th lay-data="{field:'joinTime', width:150}">加入时间</th>
-        <th lay-data="{field:'sign'}">签名</th>
-      </tr> 
-    </thead>
-    <tbody>
-      <tr>
-        <td></td>
-        <td>贤心1</td>
-        <td>2016-11-28</td>
-        <td>人生就像是一场修行a</td>
-      </tr>
-      <tr>
-        <td></td>
-        <td>贤心2</td>
-        <td>2016-11-29</td>
-        <td>人生就像是一场修行b</td>
-      </tr>
-      <tr>
-        <td></td>
-        <td>贤心3</td>
-        <td>2016-11-30</td>
-        <td>人生就像是一场修行c</td>
-      </tr>
-    </tbody>
-  </table>
-
-  <table class="layui-table" lay-filter="parse-table-demo">
-    <thead>
-      <tr>
-       <td rowspan="2" lay-data="{field:'louceng'}">楼层</td>
-       <td colspan="2">1单元</td>
-       <td colspan="2">2单元</td>
-      </tr>
-      <tr>
-       <td lay-data="{field:'men1', width:80}">1门</td>
-       <td lay-data="{field:'men2', width:80}">2门</td>
-       <td lay-data="{field:'men3', width:80}">1门</td>
-       <td lay-data="{field:'men4', width:80}">2门</td>
-      </tr>
-     </thead>
-     <tbody>
-      <tr>
-       <td>3楼</td>
-       <td>301</td>
-       <td>302</td>
-       <td>301</td>
-       <td>302</td>
-      </tr>
-      <tr>
-       <td>2楼</td>
-       <td>201</td>
-       <td>202</td>
-       <td>201</td>
-       <td>202</td>
-      </tr>
-      <tr>
-       <td>1楼</td>
-       <td>101</td>
-       <td>102</td>
-       <td>101</td>
-       <td>102</td>
-      </tr>
-    </tbody>
-  </table>
-</div>
+<table id="collection" lay-filter="collection"></table>
 
 <script src="/layui/layui.all.js" charset="utf-8"></script>
 <script>
 layui.use('table', function(){
   var table = layui.table;
   //return;
-  
-  //渲染
-  window.ins1 = table.render({
-    elem: '#test'
-    ,height: 400
-    //,width: 600
-    ,title: '用户数据表'
-    ,url: 'json/table/demo1.json'
-    //,size: 'lg'
-    ,page: {
-      
-    }
-    
-    ,autoSort: false
-    //,loading: false
-    ,totalRow: true
-    ,limit: 30
-    ,toolbar: '#toolbarDemo'
-    ,defaultToolbar: ['filter', 'exports', 'print', {
-      title: '帮助'
-      ,layEvent: 'LAYTABLE_TIPS'
-      ,icon: 'layui-icon-tips'
-    }]
-    ,cols: [[
-      {type: 'checkbox', fixed: 'left'}
-      ,{field:'id', title:'ID', width:80, fixed: 'left', unresize: true, sort: true, totalRowText: '合计：'}
-      ,{field:'username', title:'用户名', width:120, edit: 'text', templet: '#usernameTpl'}
-      ,{field:'email', title:'邮箱', hide: 0, width:150, edit: 'text', templet: function(d){
-        return '<em>'+ d.email +'</em>'
-      }}
-      ,{field:'sex', title:'性别', width:80, edit: 'text', sort: true}
-      ,{field:'city', title:'城市', width:120, templet: '#cityTpl1'}
-      ,{field:'sign', title:'签名'}
-      ,{field:'experience', title:'积分', width:80, sort: true, totalRow: true, templet: '<div>{{ d.experience }} 分</div>'}
-      ,{field:'ip', title:'IP', width:120}
-      ,{field:'logins', title:'登入次数', width:100, sort: true, totalRow: true}
-      ,{field:'joinTime', title:'加入时间', width:120}
-      ,{fixed: 'right', title:'操作', toolbar: '#barDemo', width:150}
-    ]]
-    /*
-    ,response: {
-      statusName: 'status'
-      ,statusCode: 200
-    }
-    ,parseData: function(res){
-      return {
-        "status": res.status
-        ,"msg": res.message
-        ,"count": res.total
-        ,"data": res.data.list
-      };
-    }
-    */
-  });
   
   //工具栏事件
   table.on('toolbar(test)', function(obj){
@@ -280,34 +106,28 @@ layui.use('table', function(){
   
   
   table.render({
-    elem: '#test2'
-    ,url: 'json/table/demo1.json'
-    ,contentType: 'application/json'
-    ,page: { //详细参数可参考 laypage 组件文档
-      curr: 5
-      ,groups: 1
-      ,first: false
-      ,last: false
-      ,layout: ['limit', 'prev', 'page', 'next', 'count'] //自定义分页布局
+    elem: '#collection'
+    ,url: '/collections/data/'
+    ,page: {
+      limit: 15
+      ,prev: '上一页'
+      ,next: '下一页'
+      ,layout: ['prev', 'page', 'next', 'skip']
     }
     //,height: 300
     ,cellMinWidth: 80
-    //,skin: 'line'
-    ,toolbar: true
+    ,skin: 'line'
+    ,toolbar: false
     ,cols: [[
-      {field: 'id', hide: true}
-      ,{field: 'username', title: '用户名'}
-      ,{field: 'email', title: '邮箱'}
+      //{type:'numbers', title:'序号'}
+      {field:'id', title:'ID', width:80, unresize: true, sort: true}
+      ,{field:'author', title:'原作者'}
+      ,{field:'subject', title:'标题'}
+      ,{field:'post_time', title:'发帖时间'}
+      ,{field:'spide_time', title:'采集时间'}
+      ,{field:'new_post_time', title:'发布时间'}
+      ,{field:'new_author', title:'发布作者'}
       ,{title:'操作', align:'center', toolbar: '#barDemo'}
-      /*
-      {type:'numbers'}
-      ,{field:'id', title:'ID', unresize: true, sort: true}
-      ,{field:'username', title:'用户名', templet: '#usernameTpl'}
-      ,{field:'email', title:'邮箱'}
-      ,{xfield:'sex', title:'性别', templet: '#switchTpl', minWidth: 85, align:'center'}
-      ,{field:'lock', title:'是否锁定', templet: '#checkboxTpl', minWidth: 110, align:'center'}
-      ,{field:'city', title:'城市'}
-      */
     ]]
   });
 
@@ -378,126 +198,6 @@ layui.use('table', function(){
       }
     });
   });
-  
-  //return;
-  
-  //直接赋值数据
-  table.render({
-    elem: '#demo'
-    //,width: 900
-    //,height: 274
-    ,cols: [[ //标题栏
-      {type: 'checkbox', LAY_CHECKED: true}
-      ,{field: 'id', title: 'ID', width: 80, sort: true}
-      ,{type: 'space', width: 100} //空列
-      ,{field: 'username', title: '用户名', width: 120}
-      ,{field: 'email', title: '邮箱', width: 150}
-      ,{field: 'sign', title: '签名', width: 150}
-      ,{field: 'sex', title: '性别', width: 80}
-      ,{field: 'city', title: '城市', width: 100}
-      ,{field: 'experience', title: '积分', width: 80, sort: true}
-    ]]
-    ,data: [{
-      "id": "10001"
-      ,"username": "杜甫"
-      ,"email": "xianxin@layui.com"
-      ,"sex": "男"
-      ,"city": "浙江杭州"
-      ,"sign": "人生恰似一场修行"
-      ,"experience": "116"
-      ,"ip": "192.168.0.8"
-      ,"logins": "108"
-      ,"joinTime": "2016-10-14"
-    }, {
-      "id": "10002"
-      ,"username": "李白"
-      ,"email": "xianxin@layui.com"
-      ,"sex": "男"
-      ,"city": "浙江杭州"
-      ,"sign": "人生恰似一场修行"
-      ,"experience": "12"
-      ,"ip": "192.168.0.8"
-      ,"logins": "106"
-      ,"joinTime": "2016-10-14"
-      ,"LAY_CHECKED": true
-    }, {
-      "id": "10003"
-      ,"username": "王勃"
-      ,"email": "xianxin@layui.com"
-      ,"sex": "男"
-      ,"city": "浙江杭州"
-      ,"sign": "人生恰似一场修行"
-      ,"experience": "65"
-      ,"ip": "192.168.0.8"
-      ,"logins": "106"
-      ,"joinTime": "2016-10-14"
-    }, {
-      "id": "10004"
-      ,"username": "贤心"
-      ,"email": "xianxin@layui.com"
-      ,"sex": "男"
-      ,"city": "浙江杭州"
-      ,"sign": "人生恰似一场修行"
-      ,"experience": "666"
-      ,"ip": "192.168.0.8"
-      ,"logins": "106"
-      ,"joinTime": "2016-10-14"
-    }, {
-      "id": "10005"
-      ,"username": "贤心"
-      ,"email": "xianxin@layui.com"
-      ,"sex": "男"
-      ,"city": "浙江杭州"
-      ,"sign": "人生恰似一场修行"
-      ,"experience": "86"
-      ,"ip": "192.168.0.8"
-      ,"logins": "106"
-      ,"joinTime": "2016-10-14"
-    }, {
-      "id": "10006"
-      ,"username": "贤心"
-      ,"email": "xianxin@layui.com"
-      ,"sex": "男"
-      ,"city": "浙江杭州"
-      ,"sign": "人生恰似一场修行"
-      ,"experience": "12"
-      ,"ip": "192.168.0.8"
-      ,"logins": "106"
-      ,"joinTime": "2016-10-14"
-    }, {
-      "id": "10007"
-      ,"username": "贤心"
-      ,"email": "xianxin@layui.com"
-      ,"sex": "男"
-      ,"city": "浙江杭州"
-      ,"sign": "人生恰似一场修行"
-      ,"experience": "16"
-      ,"ip": "192.168.0.8"
-      ,"logins": "106"
-      ,"joinTime": "2016-10-14"
-    }, {
-      "id": "10008"
-      ,"username": "贤心"
-      ,"email": "xianxin@layui.com"
-      ,"sex": "男"
-      ,"city": "浙江杭州"
-      ,"sign": "人生恰似一场修行"
-      ,"experience": "106"
-      ,"ip": "192.168.0.8"
-      ,"logins": "106"
-      ,"joinTime": "2016-10-14"
-    }]
-
-    ,skin: 'row' //表格风格
-    ,even: true
-    //,size: 'lg' //尺寸
-    
-    ,page: true //是否显示分页
-    ,limits: [3,5,10]
-    ,limit: 3 //每页默认显示的数量
-    //,loading: false //请求数据时，是否显示loading
-  });
-  
   
   var $ = layui.jquery, active = {
     parseTable: function(){
