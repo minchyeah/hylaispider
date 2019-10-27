@@ -10,7 +10,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="format-detection" content="telephone=no">
 
-  <link rel="stylesheet" href="../src/css/layui.css">
+  <link rel="stylesheet" href="/layui/css/layui.css">
 
 <style>
 body{padding: 10px;}
@@ -188,8 +188,7 @@ body{padding: 10px;}
 <br><br><br>
 
 
-<script src="../src/layui.js"></script>
-<!-- <script src="../build/lay/dest/layui.all.js"></script> -->
+<script src="/layui/layui.all.js"></script>
 
 <script>
 
@@ -273,54 +272,5 @@ layui.use(['form', 'layedit', 'laydate'], function(){
 
 </script>
 
-
-<form id="test">
-  <input type="radio" value="girl" disabled>
-  <input type="checkbox" name="love[a]">
-  <input type="checkbox" name="love[b]">
-  <input value="1">
-  <select name="quiz">
-    <option value="">请选择问题</option>
-    <option disabled value="你工作的第一个城市">你工作的第一个城市</option>
-    <option value="你的工号">你的工号</option>
-    <option value="你最喜欢的老师">你最喜欢的老师</option>
-    <option value="你的工号">你的工号</option>
-    <option value="你的工号">你的工号</option>
-    <option value="你的工号">你的工号</option>
-    <option value="你的工号">你的工号</option>
-    <option value="你的工号">你的工号</option>
-    <option value="你的工号">你的工号</option>
-    <option value="你的工号">你的工号</option>
-    <option value="你的工号">你的工号</option>
-    <option value="你的工号">你的工号</option>
-    <option value="你的工号">你的工号</option>
-    <option value="你的工号">你的工号</option>
-    <option value="你的工号">你的工号</option>
-    <option value="你的工号">你的工号</option>
-    <option value="你的工号">你的工号</option>
-    <option value="你的工号">你的工号</option>
-    <option value="你的工号">你的工号</option>
-    <option value="你的工号">你的工号</option>
-    <option value="你的工号" selected>你的工号</option>
-    <option value="你的工号">你的工号</option>
-    <option value="你的工号">你的工号</option>
-    <option value="你的工号">你的工号</option>
-  </select>
-  <button>Go</button>
-</form>
-<script>
-layui.use('jquery', function(){
-  var $ = layui.jquery;
-  var submit = function(){
-    return false;
-  };
-  $('#test').on('submit', function(){
-     return false
-  });
-  $('#test').on('submit', function(){
-     return true
-  });
-});
-</script>
 </body>
 </html>

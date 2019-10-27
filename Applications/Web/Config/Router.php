@@ -23,7 +23,7 @@ class Router
         '/margin/(\w+)' => 'Margin@index',
         '/orders/(\w+)' => 'Business@orders',
         '/reprice/(\w+)' => 'Business@reprice',
-        '/symbol' => 'Symbol@index',
+        '/setting' => 'Setting@index',
     ];
 
     public static $post = [
