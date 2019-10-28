@@ -14,6 +14,7 @@ class Router
         '/collections' => 'Collections@index',
         '/collections/data' => 'Collections@data',
         '/dump/(\w+)' => 'Business@dump',
+        '/export/(\w+)' => 'Business@export',
         '/login' => 'Auth@login',
         '/logout' => 'Auth@logout',
         '/setting' => 'Setting@index',
@@ -23,5 +24,6 @@ class Router
 
     public static $post = [
         '/dologin' => 'Auth@doLogin',
+        '/setting' => 'Setting@save',
     ];
 }

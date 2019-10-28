@@ -8,4 +8,9 @@ class Setting extends Base
 	{
 		$this->render('setting.html');
 	}
+
+	public function save()
+	{
+		
+	}
 }
