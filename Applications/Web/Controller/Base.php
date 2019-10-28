@@ -57,6 +57,7 @@ class Base
     protected function redirect($url='')
     {
         Http::header('Location:'.$url, true, 302);
+        Http::end();
     }
 
     /**
