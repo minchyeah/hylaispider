@@ -51,13 +51,28 @@ function post($worker)
         Workerman\Lib\Timer::add(0.3, 'post', array($worker), false);
         return;
     }
+    $post_author = $db->select('id,author_id,author,sp_author,state')
+                    ->from('pw_spider_authors')
+                    ->where('sp_author', $row['author'])
+                    ->row();
+    if(!isset($post_author['id'])){
+        Workerman\Lib\Timer::add(0.3, 'post', array($worker), false);
+
+        $pud = $db->update('pw_spider')
+                ->set('state', 99)
+                ->where('id', $row['id'])
+                ->where('tid', $row['tid'])
+                ->where('state', 1)
+                ->query();
+        return;
+    }
     echo date('Y-m-d H:i:s') . ' Poster Worker:' . $worker->id.' 正在发布： '.$row['url'].PHP_EOL;
     $threadData = [
         'fid' => 8,
         'icon' => 0,
         'titlefont' => '',
-        'author' => '仙鹤来',//$row['new_author'] ? : 'new_author',
-        'authorid' => 1111,//;$row['new_authorid'] ? : 0,
+        'author' => $post_author['author'],
+        'authorid' => $post_author['author_id'],
         'subject' => $row['subject'],
         'toolinfo' => '',
         'toolfield' => '',
@@ -65,7 +80,7 @@ function post($worker)
         'type' => 0,
         'postdate' => time(),
         'lastpost' => time(),
-        'lastposter' => '仙鹤来',//$row['new_author'] ? : 'new_author',
+        'lastposter' => $post_author['author'],
         'hits' => 0,
         'replies' => 0,
         'favors' => 0,

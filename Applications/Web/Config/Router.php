@@ -25,5 +25,6 @@ class Router
     public static $post = [
         '/dologin' => 'Auth@doLogin',
         '/setting' => 'Setting@save',
+        '/users/save' => 'Users@save',
     ];
 }

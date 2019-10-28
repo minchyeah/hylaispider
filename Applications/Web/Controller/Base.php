@@ -246,6 +246,17 @@ class Base
     }
 
     /**
+     * json
+     * @param  mixed $data
+     * @return void
+     */
+    protected function json($data='')
+    {
+        echo json_encode($data);
+        Http::end();
+    }
+
+    /**
      * 请求业务处理
      * @param string $class  Business业务名,如果 Order\Timeout
      * @param string $method 方法

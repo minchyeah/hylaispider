@@ -33,7 +33,45 @@ class Users extends Base
 					->from('pw_spider_authors')
 					->setPaging($limit)->page($page)
 					->order('id DESC')->query();
+		if(is_array($rows) && !empty($rows)){
+			foreach ($rows as &$row) {
+				$row['add_time'] = date('Y-m-d H:i', $row['add_time']);
+			}
+		}
 		$data['data'] = $rows;
-		echo json_encode($data);
+		$this->json($data);
+	}
+
+	public function save()
+	{
+		$author = trim(strval($_POST['author']));
+		$sp_author = trim(strval($_POST['sp_author']));
+		$row = $this->db()
+					->select('uid,username')
+					->from('pw_members')
+					->where('username', $author)
+					->row();
+		if(!isset($row['uid'])){
+			$this->json(['code' => 99, 'msg' => '发布用户不存在']);
+		}
+		
+	    $data = [
+	        'author_id' => $row['uid'],
+	        'author' => $row['username'],
+	        'add_time' => time(),
+	        'sp_author' => $sp_author,
+	        'state' => 1
+	    ];
+
+	    $rs = $this->db()->insert('pw_spider_authors')->cols($data)->query();
+
+	    if($rs){
+			$this->json(['code' => 0, 'msg' => '保存成功']);
+	    }else{
+			$this->json(['code' => 89, 'msg' => '保存失败']);
+	    }
 	}
 }
+
+
+
