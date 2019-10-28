@@ -12,6 +12,12 @@ use \Workerman\Protocols\Http;
 class Base
 {
     /**
+     * 队列实例
+     * @var array
+     */
+    protected static $queue = null;
+
+    /**
      * 网关异步连接实例
      * @var array
      */
@@ -103,12 +109,19 @@ class Base
     }
 
     /**
-     * 火币API类库
-     * @var Library\Huobi
+     * queue
+     * @return \Queue\Queue
      */
-    protected function huobi()
+    protected function queue()
     {
-        return Huobi::getInstance();
+        if (self::$queue == null) {
+            self::$queue = new \Queue\Queue([
+                'name' => \Config\Spider::$name,
+                'host' => \Config\Queue::$address,
+                'port' => \Config\Queue::$port
+            ]);
+        }
+        return self::$queue;
     }
 
     /**

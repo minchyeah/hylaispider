@@ -8,7 +8,7 @@ use Library\Db;
 require_once dirname(__DIR__) . '/loader.php';
 
 $spider = new Spider;
-$spider->name = 'SpiderWorker';//\Config\Spider::$name;
+$spider->name = \Config\Spider::$name;
 $spider->count = 5;
 $spider->seed = \Config\Spider::$scan_urls;
 $spider->max = 30;
