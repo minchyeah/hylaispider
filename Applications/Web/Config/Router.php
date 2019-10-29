@@ -18,6 +18,8 @@ class Router
         '/login' => 'Auth@login',
         '/logout' => 'Auth@logout',
         '/setting' => 'Setting@index',
+        '/setting/queue' => 'Setting@addqueue',
+        '/setting/stop' => 'Setting@addqueue',
         '/users' => 'Users@index',
         '/users/data' => 'Users@data',
     ];
