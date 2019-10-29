@@ -24,23 +24,42 @@ class Collections extends Base
 		// init response data
 		$data = ['code' => 0, 'msg' => ''];
 
-		$count = $this->db()->select('COUNT(id)')
-					->from('pw_spider')->single();
+		$this->db()->select('COUNT(id)')->from('pw_spider');
+		$this->search();
+		$count = $this->db()->single();
 		$data['count'] = $count;
 
-		$rows = $this->db()
-					->select('id,tid,url,author,subject,post_time,spide_time,state,new_tid,new_author,new_post_time,new_url,new_state')
-					->from('pw_spider')
-					->setPaging($limit)->page($page)
+		$this->db()
+			->select('id,tid,url,author,subject,post_time,spide_time,state,new_tid,new_author,new_post_time,new_url,new_state')
+			->from('pw_spider');
+		$this->search();
+		$rows = $this->db()->setPaging($limit)->page($page)
 					->order('id DESC')->query();
 		if(is_array($rows) && !empty($rows)){
 			foreach ($rows as &$row) {
-				$row['post_time'] = date('Y-m-d H:i', $row['post_time']);
-				$row['spide_time'] = date('Y-m-d H:i', $row['spide_time']);
-				$row['new_post_time'] = date('Y-m-d H:i', $row['new_post_time']);
+				$row['post_time'] = date('m-d H:i', $row['post_time']);
+				$row['spide_time'] = date('m-d H:i', $row['spide_time']);
+				$row['new_post_time'] = $row['new_post_time'] ? date('m-d H:i', $row['new_post_time']) : '-';
 			}
 		}
 		$data['data'] = $rows;
 		echo json_encode($data);
+	}
+
+	private function search()
+	{
+		if (isset($_GET['state']) && $_GET['state'] !== '') {
+			$state = intval($_GET['state']);
+			$state = $state < 0 ? 0 : $state;
+			$this->db()->where('state', $state < 0 ? 0 : $state);
+		}
+
+		if (isset($_GET['author']) && $_GET['author'] !== '') {
+			$this->db()->where('author', $_GET['author']);
+		}
+
+		if (isset($_GET['sp_author']) && $_GET['sp_author'] !== '') {
+			$this->db()->where('sp_author', $_GET['sp_author']);
+		}
 	}
 }

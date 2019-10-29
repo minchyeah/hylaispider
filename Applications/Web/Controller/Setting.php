@@ -6,24 +6,45 @@ class Setting extends Base
 {
 	public function index()
 	{
+		$domain = $this->db()
+						->select('svalue')
+						->from('pw_spider_settings')
+						->where('skey', 'domain')
+						->single();
+		$this->set('domain', $domain ? : '');
 		$this->render('setting.html');
 	}
 
 	public function save()
 	{
 		$domain = trim(strval($_POST['domain']));
-		$row = $this->db()->select('skey,svalue')->from('pw_spider_settings')->where('skey', 'domain')->row();
+		$row = $this->db()->select('skey,svalue')
+					->from('pw_spider_settings')
+					->where('skey', 'domain')
+					->row();
 		if(!isset($row['skey'])){
-			$this->db()->insert('pw_spider_settings')->cols(['skey'=>'domain', 'svalue'=>$domain])->query();
+			$rs = $this->db()
+					->insert('pw_spider_settings')
+					->cols(['skey'=>'domain', 'svalue'=>$domain])
+					->query();
 		}else{
-			$this->db()->update('pw_spider_settings')->set('svalue', $domain)->where('skey', 'domain')->query();
+			$rs = $this->db()
+					->update('pw_spider_settings')
+					->set('svalue', '"'.$domain.'"')
+					->where('skey', 'domain')
+					->query();
 		}
-		$this->json([]);
+	    if($rs){
+	    	$this->addqueue($domain);
+			$this->json(['code' => 0, 'msg' => '保存成功']);
+	    }else{
+			$this->json(['code' => 89, 'msg' => '保存失败']);
+	    }
 	}
 
-	public function addqueue()
+	protected function addqueue($domain)
 	{
-		$this->queue()->add('https://list.zhonghuasuan.com/', ['url_type'=>'list']);
+		$this->queue()->add($domain, ['url_type'=>'list']);
 	}
 
 	public function stop()
