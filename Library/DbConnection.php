@@ -1394,11 +1394,12 @@ class DbConnection
      * 直接设置列的值
      * @param string $col
      * @param string $value
+     * @param boolean $quote
      * @return self
      */
-    public function set($col, $value)
+    public function set($col, $value, $quote = true)
     {
-        return $this->setCol($col, $value);
+        return $this->setCol($col, $value, $quote);
     }
 
     /**
@@ -1557,30 +1558,16 @@ class DbConnection
      * @param string $value
      * @return self
      */
-    protected function setCol($col, $value)
+    protected function setCol($col, $value, $quote = true)
     {
         if ($value === null) {
             $value = 'NULL';
         }
 
-        $op = '';
-        $raw = '';
-        if(is_array($value)){
-            if(isset($value['raw'])){
-                $raw = $value['raw'];
-            }else{
-                $op = $value['op'];
-                $value = $value['val'];
-            }
-        }
-        
         $key = $this->quoteName($col);
-        $value = $this->quoteNamesIn($value);
-        
-        if($op != ''){
-            $value = array('op'=>$op, 'val'=>$value);
-        }elseif($raw != ''){
-        	$value = array('raw'=>$raw);
+
+        if(is_string($value) && $quote){
+            $value = $this->quoteNamesIn($value);
         }
         $this->col_values[$key] = $value;
         return $this;

@@ -30,7 +30,7 @@ class Setting extends Base
 		}else{
 			$rs = $this->db()
 					->update('pw_spider_settings')
-					->set('svalue', '"'.$domain.'"')
+					->set('svalue', $domain, false)
 					->where('skey', 'domain')
 					->query();
 		}
