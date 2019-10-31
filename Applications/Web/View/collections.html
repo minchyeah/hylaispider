@@ -44,7 +44,7 @@
 </form>
 </div>
 
-<script type="text/html" id="barstate">
+<script type="text/html" id="barState">
   <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
   <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
 </script>
@@ -58,7 +58,15 @@
 </script>
 
 <script type="text/html" id="stateTpl">
-  <a class="layui-btn layui-btn-xs {{d.state==2 || 'layui-btn-danger'}}">{{d.state || ''}}</a>
+  {{#  if(d.state == 0){ }}
+    <a class="layui-btn layui-btn-xs layui-btn-warm">待发布</a>
+  {{#  } }}
+  {{#  if(d.state == 2){ }}
+    <a class="layui-btn layui-btn-xs">已发布</a>
+  {{#  } }}
+  {{#  if(d.state == 99){ }}
+    <a class="layui-btn layui-btn-xs layui-btn-danger">未发布</a>
+  {{#  } }}
 </script>
 
 <table id="collection" lay-filter="collection"></table>

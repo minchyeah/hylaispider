@@ -60,6 +60,11 @@ class Base
         Http::end();
     }
 
+    protected function end()
+    {
+        Http::end();
+    }
+
     /**
      * check user is login
      * @return boolean

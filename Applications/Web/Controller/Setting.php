@@ -42,7 +42,7 @@ class Setting extends Base
 	    }
 	}
 
-	protected function addqueue($domain)
+	public function addqueue($domain)
 	{
 		$this->queue()->add($domain, ['url_type'=>'list']);
 	}

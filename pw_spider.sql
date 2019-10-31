@@ -8,7 +8,7 @@ CREATE TABLE `pw_spider` (
   `author` varchar(25) NOT NULL DEFAULT '',
   `subject` varchar(100) NOT NULL DEFAULT '',
   `post_time` int(10) unsigned NOT NULL DEFAULT '0',
-  `content` text NOT NULL DEFAULT '',
+  `content` text,
   `spide_time` int(10) unsigned NOT NULL DEFAULT '0',
   `state` tinyint(2) unsigned NOT NULL DEFAULT '0',
   `new_tid` int(10) unsigned NOT NULL DEFAULT '0',
@@ -21,5 +21,5 @@ CREATE TABLE `pw_spider` (
   KEY `new_tid` (`new_tid`),
   KEY `author` (`author`),
   KEY `post_time` (`post_time`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+)DEFAULT CHARSET=utf8;
 

@@ -44,6 +44,7 @@ class Users extends Base
 
 	public function save()
 	{
+		$id = intval($_POST['id']);
 		$author = trim(strval($_POST['author']));
 		$sp_author = trim(strval($_POST['sp_author']));
 		$row = $this->db()
@@ -58,12 +59,16 @@ class Users extends Base
 	    $data = [
 	        'author_id' => $row['uid'],
 	        'author' => $row['username'],
-	        'add_time' => time(),
 	        'sp_author' => $sp_author,
 	        'state' => 1
 	    ];
+	    if($id > 0){
+	    	$rs = $this->db()->update('pw_spider_authors')->setCols($data)->where('id', $id)->query();
+	    }else{
+	    	$data['add_time'] = time();
+	    	$rs = $this->db()->insert('pw_spider_authors')->cols($data)->query();
+	    }
 
-	    $rs = $this->db()->insert('pw_spider_authors')->cols($data)->query();
 
 	    if($rs){
 			$this->json(['code' => 0, 'msg' => '保存成功']);
