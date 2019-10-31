@@ -6,40 +6,57 @@ class Setting extends Base
 {
 	public function index()
 	{
-		$domain = $this->db()
-						->select('svalue')
+		$this->set('sp_domain', '');
+		$this->set('domain', '');
+		$settings = $this->db()
+						->select('skey,svalue')
 						->from('pw_spider_settings')
-						->where('skey', 'domain')
-						->single();
-		$this->set('domain', $domain ? : '');
+						->where('skey', 'sp_domain')
+						->orWhere('skey', 'domain')
+						->query();
+		if(is_array($settings)){
+			foreach ($settings as $set) {
+				$this->set($set['skey'], $set['svalue']);
+			}
+		}
 		$this->render('setting.html');
 	}
 
 	public function save()
 	{
+		$sp_domain = trim(strval($_POST['sp_domain']));
+		$sp_rs = $this->dosave('sp_domain', $sp_domain);
+
 		$domain = trim(strval($_POST['domain']));
-		$row = $this->db()->select('skey,svalue')
-					->from('pw_spider_settings')
-					->where('skey', 'domain')
-					->row();
-		if(!isset($row['skey'])){
-			$rs = $this->db()
-					->insert('pw_spider_settings')
-					->cols(['skey'=>'domain', 'svalue'=>$domain])
-					->query();
-		}else{
-			$rs = $this->db()
-					->update('pw_spider_settings')
-					->set('svalue', $domain, false)
-					->where('skey', 'domain')
-					->query();
-		}
-	    if($rs){
+		$rs = $this->dosave('domain', $domain);
+
+	    if($sp_rs && $rs){
 	    	$this->addqueue($domain);
 			$this->json(['code' => 0, 'msg' => '保存成功']);
 	    }else{
 			$this->json(['code' => 89, 'msg' => '保存失败']);
 	    }
+	}
+
+	private function dosave($key, $value)
+	{
+		$row = $this->db()->select('skey,svalue')
+					->from('pw_spider_settings')
+					->where('skey', $key)
+					->row();
+		if(!isset($row['skey'])){
+			$rs = $this->db()
+					->insert('pw_spider_settings')
+					->cols(['skey'=>$key, 'svalue'=>$value])
+					->query();
+		}else{
+			$rs = $this->db()
+					->update('pw_spider_settings')
+					->set('svalue', $value, false)
+					->where('skey', $key)
+					->query();
+		}
+		return $rs;
 	}
 
 	public function addqueue($domain)

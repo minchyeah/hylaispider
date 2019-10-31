@@ -24,7 +24,13 @@ body{padding: 10px;}
   <div class="layui-form-item">
     <label class="layui-form-label">采集域名</label>
     <div class="layui-input-block">
-      <input type="text" name="domain" value="{$domain}" lay-verify="required|title" lay-reqText="采集域名不能为空" required placeholder="请输采集域名,如：http://www.hyl999.vip/" autocomplete="off" class="layui-input" >
+      <input type="text" name="sp_domain" value="{$sp_domain}" lay-verify="required" lay-reqText="采集域名不能为空" required placeholder="请输采集域名,如：http://www.hyl999.vip/" autocomplete="off" class="layui-input" >
+    </div>
+  </div>
+  <div class="layui-form-item">
+    <label class="layui-form-label">发布域名</label>
+    <div class="layui-input-block">
+      <input type="text" name="domain" value="{$domain}" lay-verify="required" lay-reqText="发布域名不能为空" required placeholder="请输发布域名,如：http://www.hyl999.vip/" autocomplete="off" class="layui-input" >
     </div>
   </div>
   <div class="layui-form-item">
@@ -47,16 +53,16 @@ layui.use(['form'], function(){
 
   //自定义验证规则
   form.verify({
-    domain: function(value){
+    sp_domain: function(value){
       if(value.length < 10){
-        return '标题也太短了吧';
+        return '域名也太短了吧';
       }
     }
-    ,pass: [/(.+){6,12}$/, '密码必须6到12位']
-    ,money: [
-      /^\d+\.\b\d{2}\b$/
-      ,'金额必须为小数保留两位'
-    ]
+    ,domain: function(value){
+      if(value.length < 10){
+        return '域名也太短了吧';
+      }
+    }
   });
   
   //监听提交
