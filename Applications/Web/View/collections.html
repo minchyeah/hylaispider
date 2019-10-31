@@ -27,8 +27,9 @@
   <div class="layui-inline">
     <select name="searchState" id="searchState" lay-filter="interest">
       <option value="">状态</option>
-      <option value="-1">未发布</option>
+      <option value="0">待发布</option>
       <option value="2">已发布</option>
+      <option value="99">发布失败</option>
     </select>
   </div>
   <div class="layui-inline">
@@ -65,7 +66,7 @@
     <a class="layui-btn layui-btn-xs">已发布</a>
   {{#  } }}
   {{#  if(d.state == 99){ }}
-    <a class="layui-btn layui-btn-xs layui-btn-danger">未发布</a>
+    <a class="layui-btn layui-btn-xs layui-btn-danger">发布失败</a>
   {{#  } }}
 </script>
 

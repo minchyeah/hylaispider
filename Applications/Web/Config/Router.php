@@ -28,5 +28,6 @@ class Router
         '/dologin' => 'Auth@doLogin',
         '/setting/save' => 'Setting@save',
         '/users/save' => 'Users@save',
+        '/users/delete' => 'Users@delete',
     ];
 }

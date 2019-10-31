@@ -43,23 +43,22 @@ class Collections extends Base
 			}
 		}
 		$data['data'] = $rows;
-		echo json_encode($data);
+		$this->json($data);
 	}
 
 	private function search()
 	{
 		if (isset($_GET['state']) && $_GET['state'] !== '') {
 			$state = intval($_GET['state']);
-			$state = $state < 0 ? 0 : $state;
 			$this->db()->where('state', $state < 0 ? 0 : $state);
 		}
 
 		if (isset($_GET['author']) && $_GET['author'] !== '') {
-			$this->db()->where('author', $_GET['author']);
+			$this->db()->where('author', trim(strval($_GET['author'])));
 		}
 
 		if (isset($_GET['sp_author']) && $_GET['sp_author'] !== '') {
-			$this->db()->where('sp_author', $_GET['sp_author']);
+			$this->db()->where('sp_author', trim(strval($_GET['sp_author'])));
 		}
 	}
 }

@@ -24,14 +24,16 @@ class Users extends Base
 		// init response data
 		$data = ['code' => 0, 'msg' => ''];
 
-		$count = $this->db()->select('COUNT(id)')
-					->from('pw_spider_authors')->single();
+		$this->db()->select('COUNT(id)')->from('pw_spider_authors');
+		$this->search();
+		$count = $this->db()->single();
 		$data['count'] = $count;
 
-		$rows = $this->db()
-					->select('id,author_id,author,sp_author,add_time,state')
-					->from('pw_spider_authors')
-					->setPaging($limit)->page($page)
+		$this->db()
+			->select('id,author_id,author,sp_author,add_time,state')
+			->from('pw_spider_authors');
+		$this->search();
+		$rows = $this->db()->setPaging($limit)->page($page)
 					->order('id DESC')->query();
 		if(is_array($rows) && !empty($rows)){
 			foreach ($rows as &$row) {
@@ -40,6 +42,17 @@ class Users extends Base
 		}
 		$data['data'] = $rows;
 		$this->json($data);
+	}
+
+	private function search()
+	{
+		if (isset($_GET['author']) && $_GET['author'] !== '') {
+			$this->db()->where('author', trim(strval($_GET['author'])));
+		}
+
+		if (isset($_GET['sp_author']) && $_GET['sp_author'] !== '') {
+			$this->db()->where('sp_author', trim(strval($_GET['sp_author'])));
+		}
 	}
 
 	public function save()
@@ -69,11 +82,21 @@ class Users extends Base
 	    	$rs = $this->db()->insert('pw_spider_authors')->cols($data)->query();
 	    }
 
-
 	    if($rs){
 			$this->json(['code' => 0, 'msg' => '保存成功']);
 	    }else{
 			$this->json(['code' => 89, 'msg' => '保存失败']);
+	    }
+	}
+
+	public function delete()
+	{
+		$id = intval($_POST['id']);
+		$rs = $this->db()->delete('pw_spider_authors')->where('id', $id)->query();
+	    if($rs){
+			$this->json(['code' => 0, 'msg' => '操作成功']);
+	    }else{
+			$this->json(['code' => 89, 'msg' => '操作失败']);
 	    }
 	}
 }
