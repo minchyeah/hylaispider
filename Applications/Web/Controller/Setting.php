@@ -41,7 +41,7 @@ class Setting extends Base
 		$ers = $this->dosave('end_time', $end_time);
 
 	    if($sp_rs && $rs && $srs && $ers){
-	    	$this->addqueue($domain);
+	    	$this->addqueue($sp_domain);
 			$this->json(['code' => 0, 'msg' => '保存成功']);
 	    }else{
 			$this->json(['code' => 89, 'msg' => '保存失败']);

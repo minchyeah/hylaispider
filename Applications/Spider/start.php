@@ -35,6 +35,27 @@ $spider->afterDownloadPage = function($spider) {
     if(isset($row['id']) && $row['id'] > 0){
         return;
     }
+    $start_time = 0;
+    $end_time = 0;
+    $set_rows = $db->select('skey,svalue')
+            ->from('pw_spider_settings')
+            ->where('skey', 'start_time')
+            ->orWhere('skey', 'end_time')
+            ->query();
+    if(!is_array($set_rows)){
+        return;
+    }
+    foreach ($set_rows as $set) {
+        if($set['skey'] == 'start_time'){
+            $start_time = strtotime($set['svalue']);
+        }
+        if($set['skey'] == 'end_time'){
+            $end_time = strtotime($set['svalue']);
+        }
+    }
+    if($start_time ==0 || $end_time == 0){
+        return;
+    }
     $data['url'] = $spider->url;
     $data['spide_time'] = time();
     $html = $spider->page;
@@ -75,6 +96,10 @@ $spider->afterDownloadPage = function($spider) {
         //$spider->log(print_r($values, true));
         if($conf['name'] == 'post_time'){
             $values = strtotime($values);
+            if($values<$start_time || $values>$end_time){
+                unset($data, $values);
+                return;
+            }
         }
         $data[$conf['name']] = $values;
     }

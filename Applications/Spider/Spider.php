@@ -163,13 +163,6 @@ class Spider
             'host' => \Config\Queue::$address,
             'port' => \Config\Queue::$port
         ]);
-        foreach ((array) $this->seed as $url) {
-            if (is_string($url)) {
-                $this->queue()->add($url, ['url_type'=>'list']);
-            } elseif (is_array($url)) {
-                $this->queue()->add($url[0], $url[1]);
-            }
-        }
         $this->initHooks();
 
         $this->setDownloader();
