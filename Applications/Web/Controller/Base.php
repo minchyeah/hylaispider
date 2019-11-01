@@ -84,7 +84,7 @@ class Base
      * 数据库连接
      * @return \Library\DbConnection
      */
-    protected function db($conn = 'master')
+    protected function db($conn = 'default')
     {
         if(isset(\Config\Database::$$conn)){
             return Db::instance(\Config\Database::$$conn);
