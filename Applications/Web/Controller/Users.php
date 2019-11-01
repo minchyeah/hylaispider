@@ -60,7 +60,7 @@ class Users extends Base
 		$id = intval($_POST['id']);
 		$author = trim(strval($_POST['author']));
 		$sp_author = trim(strval($_POST['sp_author']));
-		$row = $this->db()
+		$row = $this->db('master')
 					->select('uid,username')
 					->from('pw_members')
 					->where('username', $author)

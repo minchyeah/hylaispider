@@ -110,7 +110,8 @@ function post($worker)
         'unsell' => 0,
         'unhide' => 0
     ];
-    $tid = $db->insert('pw_threads')->cols($threadData)->query();
+    $dbm = $db = Db::instance(\Config\Database::$master);
+    $tid = $dbm->insert('pw_threads')->cols($threadData)->query();
     if(!$tid){
         echo date('Y-m-d H:i:s') . ' Poster Worker:' . $worker->id . ' 发布失败'.PHP_EOL;
         return false;
@@ -129,14 +130,14 @@ function post($worker)
         'tags' => '',
         'ifconvert' => 2,
         'ifwordsfb' => 1,
-        'content' => str_replace('&#13;', '<br >', $row['content']),
+        'content' => $row['content'],
         'form' => '',
         'ifmark' => '',
         'c_from' => '',
         'magic' => '',
         'overprint' => 0
     ];
-    $rs = $db->insert('pw_tmsgs')->cols($tmsgData)->query();
+    $rs = $dbm->insert('pw_tmsgs')->cols($tmsgData)->query();
     if($rs){
         $pud = $db->update('pw_spider')
             ->set('new_tid', $tid)
@@ -148,8 +149,8 @@ function post($worker)
             ->where('state', 1)
             ->query();
         if(!$pud){
-            $db->delete('pw_threads')->where('tid', $row['tid'])->query();
-            $db->delete('pw_tmsgs')->where('tid', $row['tid'])->query();
+            $dbm->delete('pw_threads')->where('tid', $row['tid'])->query();
+            $dbm->delete('pw_tmsgs')->where('tid', $row['tid'])->query();
         }
     }
     Workerman\Lib\Timer::add(0.03, 'post', array($worker), false);

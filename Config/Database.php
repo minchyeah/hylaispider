@@ -16,7 +16,7 @@ class Database
 	 */
 	
 	/**
-	 * 默认配置
+	 * 采集数据库配置
 	 * @var array
 	 */
 	public static $default = array(
@@ -29,7 +29,7 @@ class Database
 	);
 	
 	/**
-	 * 主库配置(读写)
+	 * 发布数据库配置
 	 * @var array
 	 */
 	public static $master = array(
@@ -39,39 +39,5 @@ class Database
 		'password'	=> '111111',
 		'dbname'	=> 'www_pw_com',
 		'charset'	=> 'utf8',
-	);
-	
-	/**
-	 * 从库配置(只读)
-	 * @var array
-	 */
-	public static $slave = array(
-		'host'		=> '172.31.0.1',
-		'port'		=> '3306',
-		'user'		=> 'root',
-		'password'	=> '111111',
-		'dbname'	=> 'www_pw_com',
-		'charset'	=> 'utf8',
-	);
-
-	public static $mysql = array(
-       // 数据库类型
-       'type'     => 'mysql',
-       // 主机地址
-       'hostname' => '127.0.0.1',
-       // 端口
-       'port' => '3306',
-       // 用户名
-       'username' => 'root',
-       // 密码
-       'password' => '111111',
-       // 数据库名
-       'database' => 'bitting',
-       // 数据库编码默认采用utf8
-       'charset'  => 'utf8',
-       // 数据库表前缀
-       'prefix'   => '',
-       // 数据库调试模式
-       'debug'    => true
 	);
 }

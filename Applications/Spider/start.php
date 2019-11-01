@@ -94,12 +94,21 @@ $spider->afterDownloadPage = function($spider) {
                 $values = preg_replace($conf['filter'], '', $values);
         }
         //$spider->log(print_r($values, true));
-        if($conf['name'] == 'post_time'){
-            $values = strtotime($values);
-            if($values<$start_time || $values>$end_time){
-                unset($data, $values);
-                return;
-            }
+        switch ($conf['name']) {
+            case 'post_time':
+                $values = strtotime($values);
+                if($values<$start_time || $values>$end_time){
+                    unset($data, $values);
+                    return;
+                }
+                break;
+            case 'content':
+                $values = str_replace('&#13;', '<br >', $values);
+                break;
+            
+            default:
+                # code...
+                break;
         }
         $data[$conf['name']] = $values;
     }
