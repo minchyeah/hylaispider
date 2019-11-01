@@ -8,11 +8,15 @@ class Setting extends Base
 	{
 		$this->set('sp_domain', '');
 		$this->set('domain', '');
+		$this->set('start_time', '');
+		$this->set('end_time', '');
 		$settings = $this->db()
 						->select('skey,svalue')
 						->from('pw_spider_settings')
 						->where('skey', 'sp_domain')
 						->orWhere('skey', 'domain')
+						->orWhere('skey', 'start_time')
+						->orWhere('skey', 'end_time')
 						->query();
 		if(is_array($settings)){
 			foreach ($settings as $set) {
@@ -30,7 +34,13 @@ class Setting extends Base
 		$domain = trim(strval($_POST['domain']));
 		$rs = $this->dosave('domain', $domain);
 
-	    if($sp_rs && $rs){
+		$start_time = trim(strval($_POST['start_time']));
+		$srs = $this->dosave('start_time', $start_time);
+
+		$end_time = trim(strval($_POST['end_time']));
+		$ers = $this->dosave('end_time', $end_time);
+
+	    if($sp_rs && $rs && $srs && $ers){
 	    	$this->addqueue($domain);
 			$this->json(['code' => 0, 'msg' => '保存成功']);
 	    }else{
