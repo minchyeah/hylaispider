@@ -58,8 +58,18 @@ class Users extends Base
 	public function save()
 	{
 		$id = intval($_POST['id']);
-		$author = trim(strval($_POST['author']));
+
 		$sp_author = trim(strval($_POST['sp_author']));
+		$row = $this->db()
+					->select('id')
+					->from('pw_spider_authors')
+					->where('sp_author', $sp_author)
+					->row();
+		if(isset($row['id']) && $id != $row['id']){
+			$this->json(['code' => 99, 'msg' => '采集用户已存在']);
+		}
+
+		$author = trim(strval($_POST['author']));
 		$row = $this->db('master')
 					->select('uid,username')
 					->from('pw_members')
