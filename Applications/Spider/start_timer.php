@@ -110,7 +110,7 @@ function post($worker)
         'unsell' => 0,
         'unhide' => 0
     ];
-    $dbm = $db = Db::instance(\Config\Database::$master);
+    $dbm = Db::instance(\Config\Database::$master);
     $tid = $dbm->insert('pw_threads')->cols($threadData)->query();
     if(!$tid){
         echo date('Y-m-d H:i:s') . ' Poster Worker:' . $worker->id . ' 发布失败'.PHP_EOL;
