@@ -21,8 +21,12 @@ class Setting extends Base
 		if(is_array($settings)){
 			foreach ($settings as $set) {
 				$this->set($set['skey'], $set['svalue']);
+				if($set['skey'] == 'end_time'){
+					$this->set('start_time', $set['svalue']);
+				}
 			}
 		}
+		$this->set('end_time', date('Y-m-d H:i:s'));
 		$this->render('setting.html');
 	}
 
