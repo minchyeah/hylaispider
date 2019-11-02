@@ -140,17 +140,23 @@ function post($worker)
     $rs = $dbm->insert('pw_tmsgs')->cols($tmsgData)->query();
     if($rs){
         $pud = $db->update('pw_spider')
-            ->set('new_tid', $tid)
-            ->set('state', 2)
-            ->set('new_author', $post_author['author'])
-            ->set('new_post_time', time())
-            ->where('id', $row['id'])
-            ->where('tid', $row['tid'])
-            ->where('state', 1)
-            ->query();
+                ->set('new_tid', $tid)
+                ->set('state', 2)
+                ->set('new_author', $post_author['author'])
+                ->set('new_post_time', time())
+                ->where('id', $row['id'])
+                ->where('tid', $row['tid'])
+                ->where('state', 1)
+                ->query();
         if(!$pud){
             $dbm->delete('pw_threads')->where('tid', $row['tid'])->query();
             $dbm->delete('pw_tmsgs')->where('tid', $row['tid'])->query();
+        }else{
+            $mdrs = $dbm->update('pw_memberdata')
+                ->set('postnum', ['op'=>'+', 'val'=>1])
+                ->set('lastpost', time())
+                ->where('uid', $post_author['author_id'])
+                ->query();
         }
     }
     Workerman\Lib\Timer::add(0.03, 'post', array($worker), false);
