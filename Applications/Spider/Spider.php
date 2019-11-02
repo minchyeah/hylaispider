@@ -315,7 +315,7 @@ class Spider
         if (!$options['reserve'] && $this->queue()->isQueued($queue)) {
             $this->error();
         }
-
+        $options['verify'] = false;
         $this->url = $queue['url'];
         $this->method = isset($options['method']) ? $options['method'] : 'GET';
         $this->options = $options;
