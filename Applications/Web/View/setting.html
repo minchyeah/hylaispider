@@ -99,10 +99,10 @@ layui.use(['form','laydate','layer'], function(){
           if(data.code == 0){
             layer.msg(data.msg, {
               icon: 6,//成功的表情
-              time: 1500 //1秒关闭（如果不配置，默认是3秒）
+              time: 1000 //1秒关闭（如果不配置，默认是3秒）
             }, function(){
               layer.closeAll();
-              location.reload();
+              location.href="/collections/";
             });
           }else{
             layer.msg(data.msg,{icon: 5});//失败的表情
