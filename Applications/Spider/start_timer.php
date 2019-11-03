@@ -139,8 +139,14 @@ function post($worker)
     ];
     $rs = $dbm->insert('pw_tmsgs')->cols($tmsgData)->query();
     if($rs){
-        $post_state = 1;
-        if(strpos($row['content'], $row['sp_author']) OR strpos($row['subject'], $row['sp_author']) ){
+        $post_state = 2;
+        $sp_domain = $db->select('svalue')
+                    ->from('pw_spider_settings')
+                    ->where('skey', 'sp_domain')
+                    ->single();
+        if(strpos($row['content'], $row['author']) OR strpos($row['subject'], $row['author']) OR
+            strpos($row['content'], $sp_domain) OR strpos($row['subject'], $sp_domain)
+            ){
             $post_state = 88;
         }
         $pud = $db->update('pw_spider')
