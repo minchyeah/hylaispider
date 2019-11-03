@@ -75,7 +75,6 @@ class Setting extends Base
 
 	public function addqueue($domain)
 	{
-		$this->queue()->clean();
 		$this->queue()->add($domain, ['url_type'=>'list']);
 	}
 
