@@ -24,7 +24,7 @@ class GlobalData
      * 数据是否持久化
      * @var boolean
      */
-    public static $persistence = false;
+    public static $persistence = true;
 
     /**
      * 数据持久化文件路径

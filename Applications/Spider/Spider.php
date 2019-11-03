@@ -185,6 +185,11 @@ class Spider
         return Db::instance(\Config\Database::$default);
     }
 
+    protected function gd()
+    {
+        return \GlobalData\Client::getInstance(\Config\GlobalData::$address . ':' . \Config\GlobalData::$port);
+    }
+
     public function queue()
     {
         if ($this->queues == null) {
@@ -345,6 +350,7 @@ class Spider
         } else {
             $this->error();
         }
+        $this->tid = $this->getUrlTid($this->url);
     }
 
     public function defaultAfterDownloadPage()
@@ -433,7 +439,13 @@ class Spider
                     break;
                 case 'post_time':
                     $values = strtotime($values);
-                    if($values<$start_time || $values>$end_time){
+                    if($values < $start_time){
+                        $this->mintid = max($this->mintid, $this->tid);
+                        unset($data, $values);
+                        return;
+                    }
+                    if($values > $end_time){
+                        $this->maxtid = min($this->maxtid, $this->tid);
                         unset($data, $values);
                         return;
                     }
@@ -483,6 +495,7 @@ class Spider
         foreach ($urls as $url) {
             foreach ($this->contentUrlFilter as $urlPattern) {
                 if (preg_match($urlPattern, $url)) {
+                    $this->log( "mintid is " .$this->mintid." maxtid is " .$this->maxtid." current tid is " .$this->getUrlTid($url) . '  ' . print_r($url, true).PHP_EOL);
                     $this->queue()->add($url, ['url_type'=>'content']);
                 }
             }
