@@ -9,7 +9,7 @@ namespace Config;
 class Spider
 {
     public static $name = 'SpiderWorker';
-    public static $tasknum = 8;
+    public static $tasknum = 5;
     public static $domains = array(
         'www.pw.com'
     );
