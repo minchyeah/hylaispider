@@ -75,11 +75,12 @@ class Setting extends Base
 
 	public function addqueue($domain)
 	{
+		$this->queue()->clean();
 		$this->queue()->add($domain, ['url_type'=>'list']);
 	}
 
 	public function stop()
 	{
-		$this->queue()->add('https://list.zhonghuasuan.com/', ['url_type'=>'list']);
+		$this->queue()->clean();
 	}
 }
