@@ -7,6 +7,7 @@ use Exception;
 use GuzzleHttp\Client;
 use Workerman\Lib\Timer;
 use Workerman\Worker;
+use Library\Db;
 
 class Spider
 {
@@ -31,6 +32,9 @@ class Spider
     public $method = '';
     public $options = [];
     public $page = '';
+    public $mintid = 0;
+    public $maxtid = 0;
+    public $tid = 0;
 
     public $startWorker = '';
     public $beforeDownloadPage = '';
@@ -174,6 +178,11 @@ class Spider
         }
         
         $this->queueArgs['name'] = $this->name;
+    }
+
+    public function db()
+    {
+        return Db::instance(\Config\Database::$default);
     }
 
     public function queue()
@@ -347,16 +356,15 @@ class Spider
         if(!isset($matches[1]) || !is_numeric($matches[1])){
             return;
         }
-        $db = Db::instance(\Config\Database::$default);
         $data = array();
         $data['tid'] = $matches[1];
-        $row = $db->select('id,tid')->from('pw_spider')->where('tid', $data['tid'])->row();
+        $row = $this->db()->select('id,tid')->from('pw_spider')->where('tid', $data['tid'])->row();
         if(isset($row['id']) && $row['id'] > 0){
             return;
         }
         $start_time = 0;
         $end_time = 0;
-        $set_rows = $db->select('skey,svalue')
+        $set_rows = $this->db()->select('skey,svalue')
                 ->from('pw_spider_settings')
                 ->where('skey', 'start_time')
                 ->orWhere('skey', 'end_time')
@@ -415,7 +423,7 @@ class Spider
             //$this->log(print_r($values, true));
             switch ($conf['name']) {
                 case 'author':
-                    $author_row = $db->select('*')
+                    $author_row = $this->db()->select('*')
                             ->from('pw_spider_authors')
                             ->where('sp_author', $values)
                             ->row();
@@ -440,7 +448,7 @@ class Spider
             }
             $data[$conf['name']] = $values;
         }
-        $db->insert('pw_spider')->cols($data)->query();
+        $this->db()->insert('pw_spider')->cols($data)->query();
     }
 
     public function defaultDiscoverUrl()
@@ -475,11 +483,19 @@ class Spider
         foreach ($urls as $url) {
             foreach ($this->contentUrlFilter as $urlPattern) {
                 if (preg_match($urlPattern, $url)) {
-                    //$this->log("get content url from {$this->url} ". print_r($url, true).PHP_EOL);
                     $this->queue()->add($url, ['url_type'=>'content']);
                 }
             }
         }
+    }
+
+    protected function getUrlTid($url)
+    {
+        preg_match('/tid=(\d+)/', $url, $matches);
+        if(!isset($matches[1]) || !is_numeric($matches[1])){
+            return 0;
+        }
+        return $matches[1];
     }
 
     public function middleware($middleware, $action = 'handle')
