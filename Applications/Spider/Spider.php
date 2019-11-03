@@ -488,7 +488,10 @@ class Spider
         foreach ($urls as $url) {
             foreach ($this->listUrlFilter as $urlPattern) {
                 if (preg_match($urlPattern, $url)) {
-                    //$this->log("get list url from {$this->url} ". print_r($url, true).PHP_EOL);
+                    preg_match('/fid=(\d+)&page=(\d+)/', $url, $matches);
+                    if(isset($matches[2]) && is_numeric($matches[2]) && $matches[2] > 100){
+                        continue;
+                    }
                     $this->queue()->add($url, ['url_type'=>'list']);
                 }
             }
