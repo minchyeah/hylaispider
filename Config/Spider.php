@@ -24,12 +24,11 @@ class Spider
     );
 
     public static $fields = array(
-        // 标题
+        // 时间
         array(
-            'name' => 'subject',
-            'selector' => '//h1[contains(@id,"subject_tpc")]',
+            'name' => 'post_time',
+            'selector' => '//div[contains(@id,"pw_content")]//div[contains(@class,"tipTop")]//span[contains(@class,"mr5")]//@title',
             'required' => true,
-            'filter' => '/<a[\s]+([^>]+)>((?:.(?!\<\/a\>))*.)<\/a>/',
         ),
         // 作者
         array(
@@ -37,11 +36,12 @@ class Spider
             'selector' => '//table[contains(@class,"floot")]//div[contains(@class,"readName")]//a',
             'required' => true,
         ),
-        // 时间
+        // 标题
         array(
-            'name' => 'post_time',
-            'selector' => '//div[contains(@id,"pw_content")]//div[contains(@class,"tipTop")]//span[contains(@class,"mr5")]//@title',
+            'name' => 'subject',
+            'selector' => '//h1[contains(@id,"subject_tpc")]',
             'required' => true,
+            'filter' => '/<a[\s]+([^>]+)>((?:.(?!\<\/a\>))*.)<\/a>/',
         ),
         // 内容
         array(

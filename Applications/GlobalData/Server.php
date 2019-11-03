@@ -225,8 +225,8 @@ class Server
     {
         if($this->persistence && is_file($this->datafile) && is_readable($this->datafile)){
             include $this->datafile;
-            $this->_dataArray = $data;
-            $this->_expireArray = $expire;
+            $this->_dataArray = $data ? : [];
+            $this->_expireArray = $expire ? : [];
         }
     }
 }

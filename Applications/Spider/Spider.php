@@ -178,6 +178,9 @@ class Spider
         }
         
         $this->queueArgs['name'] = $this->name;
+
+        $this->gd()->mintid = 0;
+        $this->gd()->maxtid = 0;
     }
 
     public function db()
@@ -440,12 +443,18 @@ class Spider
                 case 'post_time':
                     $values = strtotime($values);
                     if($values < $start_time){
-                        $this->mintid = max($this->mintid, $this->tid);
+                        $mintid = intval($this->gd()->mintid);
+                        $this->gd()->mintid = max($mintid, $this->getUrlTid($this->url));
                         unset($data, $values);
                         return;
                     }
                     if($values > $end_time){
-                        $this->maxtid = min($this->maxtid, $this->tid);
+                        $maxtid = intval($this->gd()->maxtid);
+                        if($maxtid == 0){
+                            $this->gd()->maxtid = $this->getUrlTid($this->url);
+                        }else{
+                            $this->gd()->maxtid = min($maxtid, $this->getUrlTid($this->url));
+                        }
                         unset($data, $values);
                         return;
                     }
@@ -492,10 +501,17 @@ class Spider
         if ($count === 1 && !$this->contentUrlFilter[0]) {
             $this->error();
         }
+        $mintid = intval($this->gd()->mintid);
+        $maxtid = intval($this->gd()->maxtid);
         foreach ($urls as $url) {
             foreach ($this->contentUrlFilter as $urlPattern) {
                 if (preg_match($urlPattern, $url)) {
-                    $this->log( "mintid is " .$this->mintid." maxtid is " .$this->maxtid." current tid is " .$this->getUrlTid($url) . '  ' . print_r($url, true).PHP_EOL);
+                    if($mintid != 0 && $this->getUrlTid($url) < $mintid){
+                        continue;
+                    }
+                    if($maxtid != 0 && $this->getUrlTid($url) > $maxtid){
+                        continue;
+                    }
                     $this->queue()->add($url, ['url_type'=>'content']);
                 }
             }
