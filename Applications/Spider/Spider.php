@@ -19,7 +19,7 @@ class Spider
     public $urlFilter = [];
     public $listUrlFilter = [];
     public $contentUrlFilter = [];
-    public $interval = 0.1;
+    public $interval = 1;
     public $timeout = 5;
     public $userAgent = 'pc';
     public $logFile = '';

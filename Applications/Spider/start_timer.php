@@ -144,10 +144,12 @@ function post($worker)
                     ->from('pw_spider_settings')
                     ->where('skey', 'sp_domain')
                     ->single();
-        if(strpos($row['content'], $row['author']) OR strpos($row['subject'], $row['author']) OR
-            strpos($row['content'], $sp_domain) OR strpos($row['subject'], $sp_domain)
-            ){
-            $post_state = 88;
+        $warm_worlds = [$sp_domain, $row['author'], '大吉大利'];
+        foreach ($warm_worlds as $world) {
+            if(strpos($row['content'], $world) OR strpos($row['subject'], $world)){
+                $post_state = 88;
+                break;
+            }
         }
         $pud = $db->update('pw_spider')
                 ->set('new_tid', $tid)
