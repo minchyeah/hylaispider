@@ -8,8 +8,7 @@ class Setting extends Base
 	{
 		$this->set('sp_domain', '');
 		$this->set('domain', '');
-		$this->set('start_time', '');
-		$this->set('end_time', '');
+		$last_end_time = '';
 		$settings = $this->db()
 						->select('skey,svalue')
 						->from('pw_spider_settings')
@@ -22,10 +21,11 @@ class Setting extends Base
 			foreach ($settings as $set) {
 				$this->set($set['skey'], $set['svalue']);
 				if($set['skey'] == 'end_time'){
-					$this->set('start_time', $set['svalue']);
+					$last_end_time = $set['svalue'];
 				}
 			}
 		}
+		$this->set('start_time', $last_end_time);
 		$this->set('end_time', date('Y-m-d H:i:s'));
 		$this->render('setting.html');
 	}
