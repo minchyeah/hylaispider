@@ -9,9 +9,9 @@ require_once dirname(__DIR__) . '/loader.php';
 
 $spider = new Spider;
 $spider->name = \Config\Spider::$name;
-$spider->count = 5;
+$spider->count = \Config\Spider::$tasknum;
 $spider->seed = \Config\Spider::$scan_urls;
-$spider->max = 30;
+$spider->max = 50000;
 $spider->logFile = __DIR__ . '/SpiderWorker_access.log';
 $spider->listUrlFilter = \Config\Spider::$list_url_regexes;
 $spider->contentUrlFilter = \Config\Spider::$content_url_regexes;
