@@ -95,6 +95,15 @@ $spider->afterDownloadPage = function($spider) {
         }
         //$spider->log(print_r($values, true));
         switch ($conf['name']) {
+            case 'author':
+                $author_row = $db->select('*')
+                        ->from('pw_spider_authors')
+                        ->where('sp_author', $values)
+                        ->row();
+                if(!isset($author_row['id'])){
+                    return;
+                }
+                break;
             case 'post_time':
                 $values = strtotime($values);
                 if($values<$start_time || $values>$end_time){

@@ -139,9 +139,13 @@ function post($worker)
     ];
     $rs = $dbm->insert('pw_tmsgs')->cols($tmsgData)->query();
     if($rs){
+        $post_state = 1;
+        if(strpos($row['content'], $row['sp_author']) OR strpos($row['subject'], $row['sp_author']) ){
+            $post_state = 88;
+        }
         $pud = $db->update('pw_spider')
                 ->set('new_tid', $tid)
-                ->set('state', 2)
+                ->set('state', $post_state)
                 ->set('new_author', $post_author['author'])
                 ->set('new_post_time', time())
                 ->where('id', $row['id'])

@@ -27,8 +27,8 @@
   <div class="layui-inline">
     <select name="searchState" id="searchState" lay-filter="interest">
       <option value="">状态</option>
-      <option value="0">待发布</option>
-      <option value="2">已发布</option>
+      <option value="88">注意</option>
+      <option value="2">发布成功</option>
       <option value="99">发布失败</option>
     </select>
   </div>
@@ -59,11 +59,11 @@
 </script>
 
 <script type="text/html" id="stateTpl">
-  {{#  if(d.state == 0){ }}
-    <a class="layui-btn layui-btn-xs layui-btn-warm">待发布</a>
+  {{#  if(d.state == 88){ }}
+    <a class="layui-btn layui-btn-xs layui-btn-warm">注意</a>
   {{#  } }}
   {{#  if(d.state == 2){ }}
-    <a class="layui-btn layui-btn-xs">已发布</a>
+    <a class="layui-btn layui-btn-xs">发布成功</a>
   {{#  } }}
   {{#  if(d.state == 99){ }}
     <a class="layui-btn layui-btn-xs layui-btn-danger">发布失败</a>
@@ -95,12 +95,12 @@ layui.use('table', function(){
     ,cols: [[
       //{type:'numbers', title:'序号'}
       {field:'id', title:'ID', width:80, unresize: true}
-      ,{field:'author', width:120, title:'原作者'}
+      ,{field:'author', width:120, title:'采集用户'}
       ,{field:'subject', title:'标题', templet: '#subjectTpl'}
-      ,{field:'post_time', width:120, title:'发帖时间', align:'center'}
+      //,{field:'post_time', width:120, title:'发帖时间', align:'center'}
       ,{field:'spide_time', width:120, title:'采集时间', align:'center'}
+      ,{field:'new_author', width:120, title:'发布用户'}
       ,{field:'new_post_time', width:120, title:'发布时间', align:'center'}
-      ,{field:'new_author', width:120, title:'发布作者'}
       ,{field:'state', width:100,title:'状态', align:'center', templet: '#stateTpl'}
     ]]
   });
@@ -125,6 +125,10 @@ layui.use('table', function(){
       }, 'data');
     }
   };
+
+  setInterval(function(){
+    active['reload'].call(this)
+  }, 30000);
 
   $('i').on('click', function(){
     var type = $(this).data('type');
