@@ -2,6 +2,7 @@
 namespace Queue;
 
 use Workerman\Worker;
+use Spider\BloomFilter;
 
 class Queue
 {
@@ -140,5 +141,27 @@ class Queue
             }
             return $value;
         });
+    }
+
+    public function reset()
+    {
+        $this->globalData->{$this->key} = [];
+        if ($this->bloomFilter) {
+            $this->globalData->{$this->queuedKey} = new BloomFilter(400000, 14);
+        } else {
+            $this->globalData->{$this->queuedKey} = [];
+        }
+
+        $this->globalData->beanbun = [];
+
+        if (!isset($this->globalData->beanbun[$this->name])) {
+            $name = $this->name;
+            $this->globalData->up('beanbun', function ($value) use ($name) {
+                if (!in_array($name, $value)) {
+                    $value[] = $name;
+                }
+                return $value;
+            });
+        }
     }
 }

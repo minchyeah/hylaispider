@@ -73,13 +73,24 @@ class Setting extends Base
 		return $rs;
 	}
 
+    protected function gd()
+    {
+        return \GlobalData\Client::getInstance(\Config\GlobalData::$address . ':' . \Config\GlobalData::$port);
+    }
+
 	public function addqueue($domain)
 	{
+		$this->gd()->mintid = 0;
+		$this->gd()->maxtid = 0;
+		$this->queue()->reset();
 		$this->queue()->add($domain, ['url_type'=>'list']);
 	}
 
 	public function stop()
 	{
+		$this->gd()->mintid = 0;
+		$this->gd()->maxtid = 0;
 		$this->queue()->clean();
+		$this->queue()->reset();
 	}
 }
