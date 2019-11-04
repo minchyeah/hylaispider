@@ -461,18 +461,7 @@ class Spider
                     break;
                 case 'content':
                     $values = str_replace('&#13;', '<br >', $values);
-
-                    $preg = '/<div[\s]+([^>]+)>((?:.(?!\<\/div\>))*.)售价((?:.(?!\<\/div\>))*.)<\/div>/';
-                    $values = preg_replace($preg, '', $values);
-
-                    $preg1 = '/<div[\s]+([^>]+)>((?:.(?!\<\/div\>))*.)出售((?:.(?!\<\/div\>))*.)<\/div>/';
-                    $values = preg_replace($preg1, '', $values);
-
-                    $preg2 = '/<div[\s]+([^>]+)>((?:.(?!\<\/div\>))*.)购买((?:.(?!\<\/div\>))*.)<\/div>/';
-                    $values = preg_replace($preg2, '', $values);
-
-                    $preg3 = '/<div[\s]+([^>]+)>((?:.(?!\<\/div\>))*.)隐藏((?:.(?!\<\/div\>))*.)<\/div>/';
-                    $values = preg_replace($preg3, '', $values);
+                    $values = $this->replaceQuoteTips($values);
                     break;
                 
                 default:
@@ -568,6 +557,24 @@ class Spider
             $this->log("Field(\"{$fieldname}\") ".Selector::$error."\n");
         }
         return $result;
+    }
+
+    public function replaceQuoteTips($html)
+    {
+        $selector = '//div[contains(@class,"quoteTips")]';
+        $result = Selector::select($html, $selector);
+        if (Selector::$error)
+        {
+            return $html;
+        }
+        if (is_array($result) && !empty($result)) {
+            foreach ($result as $val) {
+                $html = str_replace($val, '', $html);
+            }
+        }else{
+            $html = str_replace($result, '', $html);
+        }
+        return $html;
     }
 
     /**
