@@ -509,12 +509,12 @@ class Spider
         foreach ($urls as $url) {
             foreach ($this->contentUrlFilter as $urlPattern) {
                 if (preg_match($urlPattern, $url)) {
-                    if($mintid != 0 && $this->getUrlTid($url) < $mintid){
-                        continue;
-                    }
-                    if($maxtid != 0 && $this->getUrlTid($url) > $maxtid){
-                        continue;
-                    }
+                    // if($mintid != 0 && $this->getUrlTid($url) < $mintid){
+                    //     continue;
+                    // }
+                    // if($maxtid != 0 && $this->getUrlTid($url) > $maxtid){
+                    //     continue;
+                    // }
                     $this->queue()->add($url, ['url_type'=>'content']);
                 }
             }
