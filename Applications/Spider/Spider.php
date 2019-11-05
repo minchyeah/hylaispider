@@ -415,6 +415,9 @@ class Spider
                 if (!isset($conf['selector_type']) || $conf['selector_type']=='xpath') 
                 {
                     // 如果找不到，返回的是false
+                    if($conf['name'] == 'content'){
+                        //$html = $this->replaceQuoteTips($html);
+                    }
                     $values = $this->get_fields_xpath($html, $conf['selector'], $conf['name']);
                 }
                 elseif ($conf['selector_type']=='css') 
@@ -486,11 +489,19 @@ class Spider
         if ($count === 1 && !$this->listUrlFilter[0]) {
             $this->error();
         }
+        $sp_domain = $this->db()
+                ->select('svalue')
+                ->from('pw_spider_settings')
+                ->where('skey', 'sp_domain')
+                ->single();
         foreach ($urls as $url) {
             foreach ($this->listUrlFilter as $urlPattern) {
                 if (preg_match($urlPattern, $url)) {
                     preg_match('/fid=(\d+)&page=(\d+)/', $url, $matches);
                     if(isset($matches[2]) && is_numeric($matches[2]) && $matches[2] > 30){
+                        continue;
+                    }
+                    if(0 === strpos('http', $url) && false === strpos($sp_domain, $url)){
                         continue;
                     }
                     $this->queue()->add($url, ['url_type'=>'list']);
@@ -510,12 +521,6 @@ class Spider
         foreach ($urls as $url) {
             foreach ($this->contentUrlFilter as $urlPattern) {
                 if (preg_match($urlPattern, $url)) {
-                    // if($mintid != 0 && $this->getUrlTid($url) < $mintid){
-                    //     continue;
-                    // }
-                    // if($maxtid != 0 && $this->getUrlTid($url) > $maxtid){
-                    //     continue;
-                    // }
                     $this->queue()->add($url, ['url_type'=>'content']);
                 }
             }
@@ -562,19 +567,18 @@ class Spider
     public function replaceQuoteTips($html)
     {
         $selector = '//div[contains(@class,"quoteTips")]';
-        $result = Selector::select($html, $selector);
-        if (Selector::$error)
-        {
-            return $html;
-        }
-        if (is_array($result) && !empty($result)) {
-            foreach ($result as $val) {
-                $html = str_replace($val, '', $html);
-            }
-        }else{
-            $html = str_replace($result, '', $html);
-        }
-        return $html;
+        $html = Selector::remove($html, $selector);
+
+        $selector = '//div[contains(@class,"mb10")]';
+        $html = Selector::remove($html, $selector);
+
+        $selector = '//div[contains(@class,"f12")]';
+        $html = Selector::remove($html, $selector);
+
+        $filter = '/<div[\s]+class=".*"([^>]*)>((?:.(?!\<\/div\>))*.)<\/div>/';
+        $html = preg_replace($filter, '', $html);
+
+        return trim($html);
     }
 
     /**
