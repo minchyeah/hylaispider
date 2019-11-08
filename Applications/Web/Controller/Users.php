@@ -84,7 +84,7 @@ class Users extends Base
 					->from('pw_spider_authors')
 					->where('author_id', $row['uid'])
 					->row();
-		if(isset($exrow['id']) && $id != $sp_row['id']){
+		if(isset($exrow['id']) && $id != $exrow['id']){
 			$this->json(['code' => 99, 'msg' => '发布用户已存在']);
 		}
 		
