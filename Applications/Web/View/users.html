@@ -26,7 +26,7 @@
 </form>
 </div>
 
-<table class="layui-table" lay-data="{url:'/users/data/', page:true, id:'userTable'}" lay-filter="user">
+<table class="layui-table" lay-data="{url:'/users/data/', page:{limit: 100, prev: '上一页', next: '下一页', layout: ['prev', 'page', 'next', 'skip']}, id:'userTable'}" lay-filter="user">
   <thead>
     <tr>
       <th lay-data="{type:'checkbox', fixed: 'left'}"></th>

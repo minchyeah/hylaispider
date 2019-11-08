@@ -19,7 +19,7 @@ class Users extends Base
 		if (isset($_GET['limit']) && intval($_GET['limit'])>0) {
 			$limit = intval($_GET['limit']);
 		}else{
-			$limit = 15;
+			$limit = 100;
 		}
 		// init response data
 		$data = ['code' => 0, 'msg' => ''];
