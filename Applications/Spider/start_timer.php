@@ -166,6 +166,8 @@ function post($worker)
         }else{
             $mdrs = $dbm->update('pw_memberdata')
                 ->set('postnum', ['op'=>'+', 'val'=>1])
+                ->set('rvcv', ['op'=>'+', 'val'=>50])
+                ->set('money', ['op'=>'+', 'val'=>5])
                 ->set('lastpost', time())
                 ->where('uid', $post_author['author_id'])
                 ->query();

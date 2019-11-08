@@ -60,12 +60,12 @@ class Users extends Base
 		$id = intval($_POST['id']);
 
 		$sp_author = trim(strval($_POST['sp_author']));
-		$row = $this->db()
+		$sp_row = $this->db()
 					->select('id')
 					->from('pw_spider_authors')
 					->where('sp_author', $sp_author)
 					->row();
-		if(isset($row['id']) && $id != $row['id']){
+		if(isset($sp_row['id']) && $id != $sp_row['id']){
 			$this->json(['code' => 99, 'msg' => '采集用户已存在']);
 		}
 
@@ -77,6 +77,15 @@ class Users extends Base
 					->row();
 		if(!isset($row['uid'])){
 			$this->json(['code' => 99, 'msg' => '发布用户不存在']);
+		}
+
+		$exrow = $this->db()
+					->select('id')
+					->from('pw_spider_authors')
+					->where('author_id', $row['uid'])
+					->row();
+		if(isset($exrow['id']) && $id != $sp_row['id']){
+			$this->json(['code' => 99, 'msg' => '发布用户已存在']);
 		}
 		
 	    $data = [
