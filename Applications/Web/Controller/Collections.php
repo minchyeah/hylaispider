@@ -58,7 +58,7 @@ class Collections extends Base
 		}
 
 		if (isset($_GET['sp_author']) && $_GET['sp_author'] !== '') {
-			$this->db()->where('sp_author', trim(strval($_GET['sp_author'])));
+			$this->db()->where('new_author', trim(strval($_GET['sp_author'])));
 		}
 	}
 }
