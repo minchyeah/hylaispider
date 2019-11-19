@@ -367,10 +367,6 @@ class Spider
         }
         $data = array();
         $data['tid'] = $matches[1];
-        $row = $this->db()->select('id,tid')->from('pw_spider')->where('tid', $data['tid'])->row();
-        if(isset($row['id']) && $row['id'] > 0){
-            return;
-        }
         $start_time = 0;
         $end_time = 0;
         $set_rows = $this->db()->select('skey,svalue')
@@ -473,12 +469,46 @@ class Spider
             }
             $data[$conf['name']] = $values;
         }
-        $this->db()->insert('pw_spider')->cols($data)->query();
+
+        $row = $this->db()
+                    ->select('id,tid,subject,content')
+                    ->from('pw_spider')
+                    ->where('tid', $data['tid'])
+                    ->row();
+        if(isset($row['id']) && $row['id'] > 0){
+            $worker_id = isset($this->id) ? $this->worker->id : '';
+            $this->log("Spider worker {$worker_id} udpate {$this->url} content.");
+            if($row['subject'] != $data['subject'] || $row['content'] != $data['content']){
+                $this->db()
+                    ->update('pw_spider')
+                    ->set('subject', $data['subject'])
+                    ->set('content', $data['content'])
+                    ->set('new_state', 1)
+                    ->where('id', $row['id'])
+                    ->where('tid', $data['tid'])
+                    ->query();
+            }
+        }else{
+            $this->db()
+                ->insert('pw_spider')
+                ->cols($data)
+                ->query();
+        }
     }
 
     public function defaultDiscoverUrl()
     {
         $urls = Helper::getUrlByHtml($this->page, $this->url);
+        $sp_domain = $this->db()
+                ->select('svalue')
+                ->from('pw_spider_settings')
+                ->where('skey', 'sp_domain')
+                ->single();
+        foreach ($urls as $key=>$url) {
+            if(0 === strpos('http', $url) && false === strpos($sp_domain, $url)){
+                unset($urls[$key]);
+            }
+        }
         $this->discoverListUrl($urls);
         $this->discoverContentUrl($urls);
     }
@@ -489,19 +519,11 @@ class Spider
         if ($count === 1 && !$this->listUrlFilter[0]) {
             $this->error();
         }
-        $sp_domain = $this->db()
-                ->select('svalue')
-                ->from('pw_spider_settings')
-                ->where('skey', 'sp_domain')
-                ->single();
         foreach ($urls as $url) {
             foreach ($this->listUrlFilter as $urlPattern) {
                 if (preg_match($urlPattern, $url)) {
                     preg_match('/fid=(\d+)&page=(\d+)/', $url, $matches);
                     if(isset($matches[2]) && is_numeric($matches[2]) && $matches[2] > 30){
-                        continue;
-                    }
-                    if(0 === strpos('http', $url) && false === strpos($sp_domain, $url)){
                         continue;
                     }
                     $this->queue()->add($url, ['url_type'=>'list']);

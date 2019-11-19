@@ -171,6 +171,13 @@ function post($worker)
                 ->set('lastpost', time())
                 ->where('uid', $post_author['author_id'])
                 ->query();
+
+            $db->update('pw_spider_authors')
+                ->set('add_time', time())
+                ->where('id', $post_author['id'])
+                ->where('author_id', $post_author['author_id'])
+                ->where('author', $post_author['author'])
+                ->query();
         }
     }
     Workerman\Lib\Timer::add(0.03, 'post', array($worker), false);
