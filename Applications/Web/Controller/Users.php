@@ -33,8 +33,11 @@ class Users extends Base
 			->select('id,author_id,author,sp_author,add_time,state')
 			->from('pw_spider_authors');
 		$this->search();
-		$rows = $this->db()->setPaging($limit)->page($page)
-					->order('id DESC')->query();
+		$rows = $this->db()->setPaging($limit)
+					->page($page)
+					->order('add_time ASC')
+					->order('id DESC')
+					->query();
 		if(is_array($rows) && !empty($rows)){
 			foreach ($rows as &$row) {
 				$row['add_time'] = date('Y-m-d H:i', $row['add_time']);
