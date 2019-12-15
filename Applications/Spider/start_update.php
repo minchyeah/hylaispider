@@ -80,7 +80,7 @@ function update($worker)
                     ->from('pw_spider_settings')
                     ->where('skey', 'sp_domain')
                     ->single();
-        $warm_worlds = [$sp_domain, $row['author'], '大吉大利'];
+        $warm_worlds = [$sp_domain, $row['author'], '大吉大利', '吉利'];
         foreach ($warm_worlds as $world) {
             if(strpos($row['content'], $world) OR strpos($row['subject'], $world)){
                 $post_state = 88;
