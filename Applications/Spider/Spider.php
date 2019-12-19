@@ -523,7 +523,7 @@ class Spider
             foreach ($this->listUrlFilter as $urlPattern) {
                 if (preg_match($urlPattern, $url)) {
                     preg_match('/fid=(\d+)&page=(\d+)/', $url, $matches);
-                    if(isset($matches[2]) && is_numeric($matches[2]) && $matches[2] > 30){
+                    if(isset($matches[2]) && is_numeric($matches[2]) && $matches[2] > 50){
                         continue;
                     }
                     $this->queue()->add($url, ['url_type'=>'list']);
