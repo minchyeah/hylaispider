@@ -7,15 +7,19 @@ class Setting extends Base
 	public function index()
 	{
 		$this->set('sp_domain', '');
+		$this->set('sp_page', '');
 		$this->set('domain', '');
+		$this->set('badworld', '');
 		$last_end_time = '';
 		$settings = $this->db()
 						->select('skey,svalue')
 						->from('pw_spider_settings')
 						->where('skey', 'sp_domain')
+						->orWhere('skey', 'sp_page')
 						->orWhere('skey', 'domain')
 						->orWhere('skey', 'start_time')
 						->orWhere('skey', 'end_time')
+						->orWhere('skey', 'badworld')
 						->query();
 		if(is_array($settings)){
 			foreach ($settings as $set) {
@@ -35,8 +39,14 @@ class Setting extends Base
 		$sp_domain = trim(strval($_POST['sp_domain']));
 		$sp_rs = $this->dosave('sp_domain', $sp_domain);
 
+		$sp_page = intval($_POST['sp_page']);
+		$spp_rs = $this->dosave('sp_page', $sp_page);
+
 		$domain = trim(strval($_POST['domain']));
 		$rs = $this->dosave('domain', $domain);
+
+		$badworld = trim(strval($_POST['badworld']));
+		$brs = $this->dosave('badworld', $badworld);
 
 		$start_time = trim(strval($_POST['start_time']));
 		$srs = $this->dosave('start_time', $start_time);
@@ -44,7 +54,7 @@ class Setting extends Base
 		$end_time = trim(strval($_POST['end_time']));
 		$ers = $this->dosave('end_time', $end_time);
 
-	    if($sp_rs && $rs && $srs && $ers){
+	    if($sp_rs && $spp_rs && $rs && $brs && $srs && $ers){
 	    	$this->addqueue($sp_domain);
 			$this->json(['code' => 0, 'msg' => '保存成功']);
 	    }else{

@@ -26,6 +26,12 @@
     </div>
   </div>
   <div class="layui-form-item">
+    <label class="layui-form-label">采集页数</label>
+    <div class="layui-input-block">
+      <input type="text" name="sp_page" value="{$sp_page}" lay-verify="required" lay-reqText="采集页数不能为空" required placeholder="请输采集页数" autocomplete="off" class="layui-input" >
+    </div>
+  </div>
+  <div class="layui-form-item">
       <label class="layui-form-label">开始时间</label>
       <div class="layui-input-block">
         <input type="text" name="start_time" id="start_time" value="{$start_time}" lay-verify="datetime" placeholder="yyyy-MM-dd HH:ii:ss" autocomplete="off" class="layui-input">
@@ -41,6 +47,12 @@
     <label class="layui-form-label">发布域名</label>
     <div class="layui-input-block">
       <input type="text" name="domain" value="{$domain}" lay-verify="required" lay-reqText="发布域名不能为空" required placeholder="请输发布域名,如：http://www.hyl999.vip/" autocomplete="off" class="layui-input" >
+    </div>
+  </div>
+  <div class="layui-form-item">
+    <label class="layui-form-label">注意词</label>
+    <div class="layui-input-block">
+      <textarea name="badworld" lay-verify="required" lay-reqText="注意词不能为空" required placeholder="请输注意词,多个词之间用空格隔开" autocomplete="off" class="layui-textarea">{$badworld}</textarea>
     </div>
   </div>
   <div class="layui-form-item">
