@@ -46,7 +46,7 @@ class Setting extends Base
 		$rs = $this->dosave('domain', $domain);
 
 		$badworld = trim(strval($_POST['badworld']));
-		$brs = $this->dosave('badworld', $badworld);
+		$brs = $this->dosave('badworld', $this->initBadworld($badworld));
 
 		$start_time = trim(strval($_POST['start_time']));
 		$srs = $this->dosave('start_time', $start_time);
@@ -83,23 +83,36 @@ class Setting extends Base
 		return $rs;
 	}
 
-    protected function gd()
+    protected function initBadworld($str)
     {
-        return \GlobalData\Client::getInstance(\Config\GlobalData::$address . ':' . \Config\GlobalData::$port);
+    	$data = [];
+        $arr = explode(' ', $str);
+        if(is_array($arr) && !empty($arr)){
+        	foreach ($arr as $w) {
+        		$v = trim($w);
+        		if($v != ''){
+        			$data[] = $v;
+        		}
+        	}
+        }
+        unset($arr, $str);
+        $data = array_unique($data);
+		$this->gset('badworld', $data);
+        return implode(' ', $data);
     }
 
 	public function addqueue($domain)
 	{
-		$this->gd()->mintid = 0;
-		$this->gd()->maxtid = 0;
+		$this->gset('mintid', 0);
+		$this->gset('maxtid', 0);
 		$this->queue()->reset();
 		$this->queue()->add($domain, ['url_type'=>'list']);
 	}
 
 	public function stop()
 	{
-		$this->gd()->mintid = 0;
-		$this->gd()->maxtid = 0;
+		$this->gset('mintid', 0);
+		$this->gset('maxtid', 0);
 		$this->queue()->clean();
 		$this->queue()->reset();
 	}
