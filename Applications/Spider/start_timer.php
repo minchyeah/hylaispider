@@ -26,6 +26,7 @@ $worker->onWorkerStart = function () use ($worker)
 {
     // 触发任务
     Workerman\Lib\Timer::add(1, 'post', array($worker), false);
+    Workerman\Lib\Timer::add(1800, 'repost');
 };
 
 function post($worker)
@@ -144,7 +145,10 @@ function post($worker)
                     ->from('pw_spider_settings')
                     ->where('skey', 'sp_domain')
                     ->single();
-        $warm_worlds = [$sp_domain, $row['author'], '大吉大利', '吉利'];
+        $gd = \GlobalData\Client::getInstance(\Config\GlobalData::$address . ':' . \Config\GlobalData::$port);
+        $badworld = $gd->badworld;
+        $badworld = is_array($badworld) ? $badworld : [];
+        $warm_worlds = array_merge($badworld, [$sp_domain, $row['author']]);
         foreach ($warm_worlds as $world) {
             if(strpos($row['content'], $world) OR strpos($row['subject'], $world)){
                 $post_state = 88;
@@ -181,6 +185,17 @@ function post($worker)
         }
     }
     Workerman\Lib\Timer::add(0.03, 'post', array($worker), false);
+}
+function repost()
+{
+    $lt_sp_time = time() - 1800;
+    $db = Db::instance(\Config\Database::$default);
+    $rs = $db->update('pw_spider')
+            ->set('state', 0)
+            ->where('new_tid', 0)
+            ->where('state', 1)
+            ->where('spide_time<', $lt_sp_time)
+            ->query();
 }
 
 // 如果不是在根目录启动，则运行runAll方法

@@ -483,6 +483,7 @@ class Spider
                     ->update('pw_spider')
                     ->set('subject', $data['subject'])
                     ->set('content', $data['content'])
+                    ->set('spide_time', $data['spide_time'])
                     ->set('new_state', 1)
                     ->where('id', $row['id'])
                     ->where('tid', $data['tid'])
