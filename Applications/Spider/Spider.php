@@ -524,7 +524,14 @@ class Spider
             foreach ($this->listUrlFilter as $urlPattern) {
                 if (preg_match($urlPattern, $url)) {
                     preg_match('/fid=(\d+)&page=(\d+)/', $url, $matches);
-                    if(isset($matches[2]) && is_numeric($matches[2]) && $matches[2] > 50){
+                    $sp_page = $this->db()
+                            ->select('svalue')
+                            ->from('pw_spider_settings')
+                            ->where('skey', 'sp_page')
+                            ->single();
+                    $sp_page = intval($sp_page);
+                    $sp_page = $sp_page > 0 ? $sp_page : 20;
+                    if(isset($matches[2]) && is_numeric($matches[2]) && $matches[2] > $sp_page){
                         continue;
                     }
                     $this->queue()->add($url, ['url_type'=>'list']);
