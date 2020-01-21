@@ -29,7 +29,7 @@ class Setting extends Base
 				}
 			}
 		}
-		$this->set('start_time', $last_end_time);
+		//$this->set('start_time', $last_end_time);
 		$this->set('end_time', date('Y-m-d H:i:s'));
 		$this->render('setting.html');
 	}
