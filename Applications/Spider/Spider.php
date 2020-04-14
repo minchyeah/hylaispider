@@ -505,8 +505,10 @@ class Spider
                 ->from('pw_spider_settings')
                 ->where('skey', 'sp_domain')
                 ->single();
+        $spinfo = parse_url($sp_domain);
         foreach ($urls as $key=>$url) {
-            if(0 === strpos('http', $url) && false === strpos($sp_domain, $url)){
+            $urlinfo = parse_url($url);
+            if($urlinfo['host'] != $spinfo['host']){
                 unset($urls[$key]);
             }
         }
