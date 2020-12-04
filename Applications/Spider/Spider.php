@@ -513,7 +513,9 @@ class Spider
             }
         }
         $this->discoverListUrl($urls);
-        $this->discoverContentUrl($urls);
+        if($this->isListUrl($this->url)){
+            $this->discoverContentUrl($urls);
+        }
     }
 
     public function discoverListUrl($urls)
@@ -525,7 +527,7 @@ class Spider
         foreach ($urls as $url) {
             foreach ($this->listUrlFilter as $urlPattern) {
                 if (preg_match($urlPattern, $url)) {
-                    preg_match('/fid=(\d+)&page=(\d+)/', $url, $matches);
+                    preg_match('/&page=(\d+)/', $url, $matches);
                     $sp_page = $this->db()
                             ->select('svalue')
                             ->from('pw_spider_settings')
@@ -533,7 +535,7 @@ class Spider
                             ->single();
                     $sp_page = intval($sp_page);
                     $sp_page = $sp_page > 0 ? $sp_page : 20;
-                    if(isset($matches[2]) && is_numeric($matches[2]) && $matches[2] > $sp_page){
+                    if(isset($matches[1]) && is_numeric($matches[1]) && $matches[1] > $sp_page){
                         continue;
                     }
                     $this->queue()->add($url, ['url_type'=>'list']);
@@ -557,6 +559,16 @@ class Spider
                 }
             }
         }
+    }
+
+    protected function isListUrl($url)
+    {
+        foreach ($this->listUrlFilter as $urlPattern) {
+            if (preg_match($urlPattern, $url)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     protected function getUrlTid($url)
