@@ -1495,6 +1495,8 @@ class DbConnection
                 $values[] = "{$col} = {$col}{$op}'{$val}'";
             }elseif(isset($value['raw'])){
                 $values[] = "{$col} = {$value['raw']}";
+            }elseif(in_array($value, $this->col_values)){
+                $values[] = "{$col} = {$value}";
             }else{
                 $values[] = "{$col} = '{$value}'";
             }
@@ -1646,16 +1648,7 @@ class DbConnection
             if(!$this->pdo){
                 $this->connect();
             }
-            $this->sQuery = $this->pdo->prepare($query);
-            $this->bindMore($parameters);
-            if(!empty($this->parameters)) {
-                foreach($this->parameters as $param)
-                {
-                    $parameters = explode("\x7F",$param);
-                    $this->sQuery->bindParam($parameters[0],$parameters[1]);
-                }
-            }
-            $this->success = $this->sQuery->execute();
+            $this->pdoexec($query, $parameters);
         }
         catch(\PDOException $e)
         {
@@ -1664,16 +1657,20 @@ class DbConnection
             {
                 $this->closeConnection();
                 $this->connect();
-                $this->sQuery = $this->pdo->prepare($query);
-                $this->bindMore($parameters);
-                if(!empty($this->parameters)) {
-                    foreach($this->parameters as $param)
-                    {
-                        $parameters = explode("\x7F",$param);
-                        $this->sQuery->bindParam($parameters[0],$parameters[1]);
+                $this->pdoexec($query, $parameters);
+            }
+            elseif($e->errorInfo[1] == 'HY093')
+            {
+                $params = [];
+                $i = 1;
+                foreach ($parameters as $key => $value) {
+                    if(!is_numeric($key)){
+                        $query = str_replace(':'.$key, '?', $query);
                     }
+                    $params[$i] = $value;
+                    $i += 1;
                 }
-                $this->success  = $this->sQuery->execute();
+                $this->pdoexec($query, $params);
             }
             else
             {
@@ -1686,6 +1683,21 @@ class DbConnection
             $this->error = $errinfo[0].': ['.$errinfo[1].']'.$errinfo[2];
         }
         return $this->success;
+    }
+
+    protected function pdoexec($query, $parameters)
+    {
+        $this->sQuery = $this->pdo->prepare($query);
+        $this->bindMore($parameters);
+        if(!empty($this->parameters)) {
+            foreach($this->parameters as $param)
+            {
+                $parameters = explode("\x7F",$param);
+                $this->sQuery->bindParam($parameters[0],$parameters[1]);
+            }
+        }
+        $this->parameters = array();
+        $this->success  = $this->sQuery->execute();
     }
     
     /**
