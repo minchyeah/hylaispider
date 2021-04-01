@@ -17,17 +17,23 @@ class Spider
         'http://www.hyl999.vip/',   // 随便定义一个入口，要不然会报没有入口url错误，但是这里其实没用
     );
     public static $list_url_regexes = array(
-        '/\/thread.php\?fid=(\d+)(&page=(\d+))*$/',   // 列表页
+        '/\/thread.php\?fid=2&search=all&page=(\d+)$/',   // 列表页
+        '/\/thread\/2\/(\d+).html$/',   // 列表页
     );
     public static $content_url_regexes = array(
         '/\/read.php\?tid=(\d+)(&fpage=(\d+))*$/',
+        '/\/html\/2\/(\d+).html$/',   // 列表页
     );
+
+    public static $list_page_regexes = '/&page=(\d+)/'; // 获取列表分页
+    public static $content_id_regexes = '/tid=(\d+)/'; // 获取帖子ID
+    public static $href_type = 'absolute';  // 地址类型,relative:相对路径，absolute:绝对路径
 
     public static $fields = array(
         // 时间
         array(
             'name' => 'post_time',
-            'selector' => '//div[contains(@id,"pw_content")]//div[contains(@class,"tipTop")]//span[contains(@class,"mr5")]//@title',
+            'selector' => '//div[contains(@id,"pw_content")]//div[contains(@class,"tipTop")]//span[2]//@title',
             'required' => true,
         ),
         // 作者

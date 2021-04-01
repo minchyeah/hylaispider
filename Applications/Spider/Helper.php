@@ -32,19 +32,22 @@ class Helper
         ],
     ];
 
-    public static function getUrlByHtml($html, $url)
+    public static function getUrlByHtml($html, $url, $href_type='relative')
     {
         $pattern = "'<\s*a\s.*?href\s*=\s*([\"\'])?(?(1) (.*?)\\1 | ([^\s\>]+))'isx";
         preg_match_all($pattern, $html, $match);
         $match = array_merge($match[2], $match[3]);
         $hrefs = array_flip(array_flip(array_filter($match)));
+        if ($href_type != 'absolute') {
+            $href_type='relative';
+        }
         foreach ($hrefs as $key => $href) {
-            $hrefs[$key] = self::formatUrl($href, $url);
+            $hrefs[$key] = self::formatUrl($href, $url, $href_type);
         }
         return array_flip(array_flip(array_filter($hrefs)));
     }
 
-    public static function formatUrl($l1, $l2)
+    public static function formatUrl($l1, $l2, $href_type='relative')
     {
         if (strlen($l1) > 0) {
             $I1 = str_replace([chr(34), chr(39)], '', $l1);
@@ -87,6 +90,8 @@ class Helper
             return $I1 = $l3 . $path . substr($I1, strlen($I1) - (strlen($I1) - 1), strlen($I1) - 1);
         } elseif (strtolower(substr($I1, 0, 7)) == 'mailto:' || strtolower(substr($I1, 0, 11)) == 'javascript:') {
             return false;
+        } elseif($href_type == 'absolute') {
+            return $I1 = $l3 . '/' . ltrim($I1, '/');
         } else {
             return $I1 = $l3 . rtrim($path, '/') . '/' . $I1;
         }

@@ -18,8 +18,11 @@ class Spider
     public $max = 0;
     public $seed = [];
     public $urlFilter = [];
+    public $hrefType = 'relative';
     public $listUrlFilter = [];
+    public $listPageFilter = '';
     public $contentUrlFilter = [];
+    public $contentIdFilter = '';
     public $interval = 1;
     public $timeout = 5;
     public $userAgent = 'pc';
@@ -361,7 +364,7 @@ class Spider
         if($this->urlType != 'content'){
             return;
         }
-        preg_match('/tid=(\d+)/', $this->url, $matches);
+        preg_match($this->contentIdFilter, $this->url, $matches);
         if(!isset($matches[1]) || !is_numeric($matches[1])){
             return;
         }
@@ -499,7 +502,7 @@ class Spider
 
     public function defaultDiscoverUrl()
     {
-        $urls = Helper::getUrlByHtml($this->page, $this->url);
+        $urls = Helper::getUrlByHtml($this->page, $this->url, $this->hrefType);
         $sp_domain = $this->db()
                 ->select('svalue')
                 ->from('pw_spider_settings')
@@ -527,7 +530,7 @@ class Spider
         foreach ($urls as $url) {
             foreach ($this->listUrlFilter as $urlPattern) {
                 if (preg_match($urlPattern, $url)) {
-                    preg_match('/&page=(\d+)/', $url, $matches);
+                    preg_match($this->listPageFilter, $url, $matches);
                     $sp_page = $this->db()
                             ->select('svalue')
                             ->from('pw_spider_settings')
@@ -573,7 +576,7 @@ class Spider
 
     protected function getUrlTid($url)
     {
-        preg_match('/tid=(\d+)/', $url, $matches);
+        preg_match($this->contentIdFilter, $url, $matches);
         if(!isset($matches[1]) || !is_numeric($matches[1])){
             return 0;
         }
